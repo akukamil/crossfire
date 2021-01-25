@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+	html,
+		body {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+	}
+	
+	body {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: black;
+	}
+
+	@font-face{
+		font-family: "m_font";
+		src: url("19508.otf");
+	}
+	
+	#myProgress {
+		margin: 10px;
+		display: flex;
+		align-items: center;
+	  width: 100%;
+	  background-color: #ddd;
+	}
+
+	#myBar {
+		display: flex;
+		align-items: center;
+	  width: 1%;
+	  height: 30px;
+	  background-color: #4CAF50;
+	}
+	
+</style>
+
+<p style="font-size:100px"; id="demo"></p>
+
+<div id="myProgress">
+  <div id="myBar"></div>
+</div>
+
+
+<body onload="load()">
+	<script src="load_list.txt"> </script>	
+	<script src="pixi.min.js"></script>	
+	<script src="pixi-sound.js"></script>	
+	<script src="index.js"> </script>
+
+</body>
+
+</html>
