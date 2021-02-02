@@ -2,7 +2,15 @@ var PI=3.1415926535, M_WIDTH=450, M_HEIGHT=800, game_tick;
 var app, game_res, game_tick=0, g_spd=5, objects={}, baloons=[], a_cnt=20, level=0, bursted_baloons=0, game_ended=false;
 var screen_0, screen_1, screen_2, screen_3;
 g_process=function(){};
-var path=[[-10,200],[126,199],[300,240],[370,275],[410,330],[420,465],[410,590],[380,640],[320,680],[220,700],[130,680],[70,640],[40,580],[30,450],[40,330],[90,280],[170,240],[344,199],[470,200]];
+
+
+
+var path=[[],[]];
+path[0]=[[-10,200],[126,199],[300,240],[370,275],[410,330],[420,465],[410,590],[380,640],[320,680],[220,700],[130,680],[70,640],[40,580],[30,450],[40,330],[90,280],[170,240],[344,199],[470,200]];
+
+path[1]=[[-10,100],[470,100]];
+
+
 var l_info=[[10,20,5],[12,22,5],[14,24,5],[16,26,5],[18,28,5],[20,30,6],[22,32,6],[24,34,6],[26,36,6],[28,38,6],[30,40,7],[32,42,7],[34,44,7],[36,46,7],[38,48,7],[40,50,8],[42,52,8],[44,54,8],[46,56,8],[48,58,8],[50,60,9],[52,62,9],[54,64,9],[56,66,9],[58,68,9]];
 
 
@@ -83,35 +91,80 @@ class baloon_class extends PIXI.Sprite
 		this.dx=0;
 		this.dy=0;
 		this.spd=1.5;
+		this.type=0;
+		this.is_slow_down=false;
+		this.slow_down_start=0;
+		
+		this.path_id=0;
+		
+		this.tar_x=0;
+		this.tar_y=0;
 	}
 	
-	send()
-	{		
+	send(type)
+	{			
 	
-		this.x=path[0][0];
-		this.y=path[0][1];
+		this.type=type;
+		if (type==0)
+		{
+			this.texture=game_res.resources['baloon'].texture;	
+			this.path_id=0;			
+		}
+
+		if (type==1)
+		{
+			this.texture=game_res.resources['baloon_bonus_arrows'].texture;		
+			this.path_id=1;				
+		}
+
+		if (type==2)
+		{
+			this.texture=game_res.resources['baloon_bonus_slow'].texture;	
+			this.path_id=1;				
+		}
+	
+	
+		this.x=path[this.path_id][0][0];
+		this.y=path[this.path_id][0][1];
 		this.visible=true;
 		this.tar_node=0;
 		this.dx=0;
 		this.dy=0;
 		this.spd=1.5;
+		this.is_slow_down=false;
+		this.slow_down_start=0;
+
 		this.retarget();	
+
+	}
+		
+	
+		
+	slow_down()
+	{
+		
+		this.spd=0.5;
+		this.is_slow_down=true;
+		this.slow_down_start=game_tick;
 		
 	}
 	
 	retarget()
 	{
 		this.tar_node++;		
-		if (this.tar_node==path.length)
+		if (this.tar_node==path[this.path_id].length)
 		{
-			screen_1.decrease_life();
+			if (this.type==0)
+				screen_1.decrease_life();
 			this.visible=false;			
 			return;
 		}
 
+		this.tar_x=path[this.path_id][this.tar_node][0]+Math.random()*20-10;
+		this.tar_y=path[this.path_id][this.tar_node][1]+Math.random()*20-10;
 		
-		var dx=path[this.tar_node][0]-this.x;
-		var dy=path[this.tar_node][1]-this.y;
+		var dx=this.tar_x-this.x;
+		var dy=this.tar_y-this.y;
 		var d=dx*dx+dy*dy;
 		d=Math.sqrt(d);
 		this.dx=dx/d;
@@ -123,11 +176,22 @@ class baloon_class extends PIXI.Sprite
 		if (this.visible==false)
 			return;
 		
+		
+		//проверяем завершение замедления
+		if (this.is_slow_down==true)
+		{
+			if (game_tick>this.slow_down_start+3)
+			{
+				this.is_slow_down=false;
+				this.spd=1.5;				
+			}		
+		}
+		
 		this.x+=this.dx*this.spd*g_spd;
 		this.y+=this.dy*this.spd*g_spd;
 		
-		var dx=path[this.tar_node][0]-this.x;
-		var dy=path[this.tar_node][1]-this.y;
+		var dx=this.tar_x-this.x;
+		var dy=this.tar_y-this.y;
 		var d=dx*dx+dy*dy;
 		d=Math.sqrt(d);
 		if (d<(this.spd*g_spd+0.1))
@@ -234,18 +298,40 @@ class screen_1_class
 		this.last_send_time=0;
 	}
 	
-	
-	
-	send_baloon()
-	{
+	send_baloon(bonus=false)
+	{		
+		
 		for (var i=0;i<objects.baloons.length;i++)
 		{
 			if (objects.baloons[i].visible==false)
 			{
-				objects.baloons[i].send();
+				
+				if (bonus==true)
+				{
+					var r_num=Math.random();
+					
+					if (r_num>0.5)
+						objects.baloons[i].send(1);					
+					else
+						objects.baloons[i].send(2);						
+				}
+				else
+				{
+					objects.baloons[i].send(0);		
+					this.prv_baloon_send=game_tick;	
+					this.baloons_sent++;
+				}				
+
 				return;
 			}			
 		}
+	}
+	
+	slow_baloons()
+	{
+		
+		objects.baloons.forEach(e=>e.slow_down());
+		
 	}
 	
 	draw_and_init()
@@ -298,6 +384,9 @@ class screen_1_class
 		
 		//время когда предыдущий шар был выпущен
 		this.prv_baloon_send=game_tick;
+		
+		//время когда предыдущий бонус был выпущен
+		this.prv_bonus_time=game_tick;
 		
 		//устанавливаем количество шаров в уровне
 		this.baloons_cnt=l_info[level][0];
@@ -377,9 +466,7 @@ class screen_1_class
 		{
 			if(game_tick>this.prv_baloon_send+0.7)
 			{
-				this.send_baloon();
-				this.baloons_sent++;
-				this.prv_baloon_send=game_tick;		
+				this.send_baloon();	
 			}			
 		}
 	
@@ -397,6 +484,12 @@ class screen_1_class
 			
 		}
 		
+	}
+	
+	add_arrows(cnt)
+	{
+		this.arrows_cnt+=cnt;
+		objects.arrows_info_text.text="X"+this.arrows_cnt
 	}
 	
 	process()
@@ -427,12 +520,6 @@ class screen_1_class
 			this.sec_left--;
 			
 			
-			if (this.arrows_cnt==0 && game_ended==false)
-			{
-				objects.game_over.visible=true;				
-				game_ended=true;
-			}
-
 			if (this.life==0 && game_ended==false)
 			{
 				objects.game_over.visible=true;				
@@ -450,17 +537,23 @@ class screen_1_class
 			this.sec_check++;
 		}
 
-		//добавляем шары
+		//добавляем обычные шары
 		if (this.baloons_sent<this.baloons_cnt)
 		{
 			if(game_tick/g_spd>this.prv_baloon_send+0.7)
 			{
-				this.send_baloon();
-				this.baloons_sent++;
-				this.prv_baloon_send=game_tick;		
+				this.send_baloon();		
 			}			
 		}
 
+
+		//добавляем бонусы в соответствующее время
+		if(game_tick>this.prv_bonus_time+6)
+		{
+			
+			this.send_baloon(true);		
+			this.prv_bonus_time=game_tick;
+		}
 
 		
 		//возвращаем назад стрелу
@@ -492,8 +585,15 @@ class screen_1_class
 						d=Math.sqrt(d);
 						if (d<30)
 						{
-							objects.baloons[i].visible=false;		
-							bursted_baloons++;
+							objects.baloons[i].visible=false;	
+							if (objects.baloons[i].type==0)
+								bursted_baloons++;							
+							if (objects.baloons[i].type==1)
+								this.add_arrows(3);
+							if (objects.baloons[i].type==2)
+								this.slow_baloons();
+							
+							
 						}					
 					
 					}
@@ -556,8 +656,6 @@ class screen_2_class
 	{
 
 	}	
-
-	
 
 }
 
@@ -758,15 +856,23 @@ function load()
 		}
 		
 		
-		
-		screen_0=new screen_0_class(0);
-		screen_1=new screen_1_class(1);
-		screen_2=new screen_2_class(2);
-		screen_3=new screen_3_class(3);
-				
-		screen_0.draw_and_init();
-		
-		main_loop();	
+		var font = new FontFaceObserver('m_font');
+		font.load().then(
+			function ()
+			{
+				screen_0=new screen_0_class(0);
+				screen_1=new screen_1_class(1);
+				screen_2=new screen_2_class(2);
+				screen_3=new screen_3_class(3);				
+				screen_0.draw_and_init();
+				main_loop();
+			},
+			function ()
+			{
+				alert('Font is not available');
+			}
+		);
+	
 	}
 
 	function progress(loader, resource)
