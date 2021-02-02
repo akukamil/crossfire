@@ -1,9 +1,9 @@
 var PI=3.1415926535, M_WIDTH=450, M_HEIGHT=800, game_tick;
-var app, game_res, game_tick=0, objects={}, baloons=[];
+var app, game_res, game_tick=0, g_spd=5, objects={}, baloons=[], a_cnt=20, level=0, bursted_baloons=0, game_ended=false;
 var screen_0, screen_1, screen_2, screen_3;
 g_process=function(){};
-
-var path=[[40,440],[46.3,377.9],[64.8,320],[94.2,270.3],[132.5,232.2],[177.1,208.2],[225,200],[272.9,208.2],[317.5,232.2],[355.8,270.3],[385.2,320],[403.7,377.9],[410,440],[403.7,502.1],[385.2,560],[355.8,609.7],[317.5,647.8],[272.9,671.8],[225,680],[177.1,671.8],[132.5,647.8],[94.2,609.7],[64.8,560],[46.3,502.1]];
+var path=[[-10,200],[126,199],[300,240],[370,275],[410,330],[420,465],[410,590],[380,640],[320,680],[220,700],[130,680],[70,640],[40,580],[30,450],[40,330],[90,280],[170,240],[344,199],[470,200]];
+var l_info=[[10,20,5],[12,22,5],[14,24,5],[16,26,5],[18,28,5],[20,30,6],[22,32,6],[24,34,6],[26,36,6],[28,38,6],[30,40,7],[32,42,7],[34,44,7],[36,46,7],[38,48,7],[40,50,8],[42,52,8],[44,54,8],[46,56,8],[48,58,8],[50,60,9],[52,62,9],[54,64,9],[56,66,9],[58,68,9]];
 
 
 class message_class extends PIXI.Sprite
@@ -88,15 +88,27 @@ class baloon_class extends PIXI.Sprite
 	send()
 	{		
 	
+		this.x=path[0][0];
+		this.y=path[0][1];
 		this.visible=true;
-		this.retarget();		
+		this.tar_node=0;
+		this.dx=0;
+		this.dy=0;
+		this.spd=1.5;
+		this.retarget();	
+		
 	}
 	
 	retarget()
 	{
 		this.tar_node++;		
 		if (this.tar_node==path.length)
-			this.tar_node=0;
+		{
+			screen_1.decrease_life();
+			this.visible=false;			
+			return;
+		}
+
 		
 		var dx=path[this.tar_node][0]-this.x;
 		var dy=path[this.tar_node][1]-this.y;
@@ -111,14 +123,14 @@ class baloon_class extends PIXI.Sprite
 		if (this.visible==false)
 			return;
 		
-		this.x+=this.dx*this.spd;
-		this.y+=this.dy*this.spd;
+		this.x+=this.dx*this.spd*g_spd;
+		this.y+=this.dy*this.spd*g_spd;
 		
 		var dx=path[this.tar_node][0]-this.x;
 		var dy=path[this.tar_node][1]-this.y;
 		var d=dx*dx+dy*dy;
 		d=Math.sqrt(d);
-		if (d<(this.spd+0.1))
+		if (d<(this.spd*g_spd+0.1))
 			this.retarget();
 	}
 	
@@ -158,8 +170,8 @@ class arrow_class extends PIXI.Sprite
 		}
 		else
 		{
-			this.x+=this.dx*10;
-			this.y+=this.dy*10;
+			this.x+=this.dx*10*g_spd;
+			this.y+=this.dy*10*g_spd;
 			
 			if (this.x>M_WIDTH || this.x<0 || this.y>M_HEIGHT || this.y<0)
 			{
@@ -201,10 +213,15 @@ class screen_0_class
 			}		
 		}
 		
+		
+		g_process=this.process.bind(this);
 	}
 	
 	process()
 	{
+		objects.bow5.rotation=(Math.sin(game_tick))*0.8+0.8;
+		objects.baloon5.y=200+(Math.sin(game_tick*2))*50;
+		game_tick += 0.01666666;
 		
 	}	
 }
@@ -217,9 +234,18 @@ class screen_1_class
 		this.last_send_time=0;
 	}
 	
-	send_message(msg)
+	
+	
+	send_baloon()
 	{
-		objects.message_box.send(msg);
+		for (var i=0;i<objects.baloons.length;i++)
+		{
+			if (objects.baloons[i].visible==false)
+			{
+				objects.baloons[i].send();
+				return;
+			}			
+		}
 	}
 	
 	draw_and_init()
@@ -250,33 +276,49 @@ class screen_1_class
 			
 		}
 				
-		g_process=this.process.bind(this);
+		//функция процессинга
+		g_process=this.process_init.bind(this);
 		
-		
-		
+		//секундная проверка событий
+		this.sec_check=1;
+				
+	
 		//карта событий
 		this.event_id=0;
 		this.events=[
-		[1,"objects.baloons[0].send();"],
-		[3,"objects.baloons[1].send();"],
-		[5,"objects.baloons[2].send();"],
-		[7,"objects.baloons[3].send();"],
-		[9,"objects.baloons[4].send();"],
-		[11,"objects.baloons[5].send();"],	
-		[13,"objects.baloons[6].send();"],	
-		[15,"objects.baloons[7].send();"],	
-		[17,"objects.baloons[8].send();"],	
-		[19,"objects.baloons[9].send();"],	
-		[25,"this.send_message('25 seconds to summer');"],	
-		[999999,"alert('long game'"],		
+		[999999,"alert('long game'"]		
 		];
+		g_spd=5;
+		game_tick = 0;
+		game_ended=false;
+		bursted_baloons=0;
+		this.passed_baloons=0;
 		
+		this.baloons_sent=0;
 		
+		//время когда предыдущий шар был выпущен
+		this.prv_baloon_send=game_tick;
 		
+		//устанавливаем количество шаров в уровне
+		this.baloons_cnt=l_info[level][0];
+		
+		//устанавливаем начальное количество стрелки
+		this.arrows_cnt=l_info[level][1];
+		objects.arrows_info_text.text="X"+this.arrows_cnt
+		
+		//обозначаем уровень		
+		objects.level_note.text="Level "+level;
+		
+		//устанавливаем количество жизней
+		this.life=l_info[level][2];
+		objects.life_info.text="X"+this.life;
 	}
 	
 	send_arrow()
 	{
+		if (this.arrows_cnt==0)
+			return;
+		
 		//запоминаем время выстрела
 		this.last_send_time=game_tick;
 		
@@ -295,16 +337,27 @@ class screen_1_class
 		objects.bow.texture=game_res.resources['bow2'].texture;
 		objects.bow.pointerdown=null;
 		
+		this.arrows_cnt--;
+
+		//обновляем инфор о количестве стрел
+		objects.arrows_info_text.text="X"+this.arrows_cnt
 		
 
 	}
+			
+	decrease_life()
+	{
+		this.life--;
+		objects.life_info.text="X"+this.life;
+		this.passed_baloons++;
+	}
 	
-	process()
+	process_init()
 	{
 		
 		//крутим дартц
-		objects.bow.rotation-=0.05;
-		objects.arrow.rotation-=0.05;
+		objects.bow.rotation-=0.05*g_spd;
+		objects.arrow.rotation-=0.05*g_spd;
 		
 		//обрабатываем шары
 		objects.baloons.forEach(e=>e.process());
@@ -312,8 +365,54 @@ class screen_1_class
 		//обрабатываем стрелки
 		objects.arrows.forEach(e=>e.process());
 		
-
+		//обрабатываем события
+		if (game_tick>this.events[this.event_id][0])
+		{
+			eval(this.events[this.event_id][1]);
+			this.event_id++;		
+		}			
 		
+		//добавляем шары
+		if (this.baloons_sent<this.baloons_cnt)
+		{
+			if(game_tick>this.prv_baloon_send+0.7)
+			{
+				this.send_baloon();
+				this.baloons_sent++;
+				this.prv_baloon_send=game_tick;		
+			}			
+		}
+	
+		
+		game_tick += 0.01666666*g_spd;	
+		
+		
+		if (game_tick/g_spd>1)
+		{
+			g_spd=1;
+			
+			//включаем нажимание кнопки
+			objects.bcg.pointerdown=function(){screen_1.send_arrow()};
+			g_process=this.process.bind(this);
+			
+		}
+		
+	}
+	
+	process()
+	{
+		
+		//крутим дартц
+		objects.bow.rotation-=0.05*g_spd;
+		objects.arrow.rotation-=0.05*g_spd;
+		
+		//обрабатываем шары
+		objects.baloons.forEach(e=>e.process());
+		
+		//обрабатываем стрелки
+		objects.arrows.forEach(e=>e.process());
+		
+	
 		//обрабатываем события
 		if (game_tick>this.events[this.event_id][0])
 		{
@@ -322,9 +421,47 @@ class screen_1_class
 		}			
 
 
-		//обрабатываем сообщения
-		if (objects.message_box.visible==true)
-			objects.message_box.process();
+		//секундная проверка событий
+		if (game_tick>this.sec_check)
+		{
+			this.sec_left--;
+			
+			
+			if (this.arrows_cnt==0 && game_ended==false)
+			{
+				objects.game_over.visible=true;				
+				game_ended=true;
+			}
+
+			if (this.life==0 && game_ended==false)
+			{
+				objects.game_over.visible=true;				
+				game_ended=true;
+			}
+			
+			if ((bursted_baloons+this.passed_baloons)==this.baloons_cnt && game_ended==false)
+			{				
+				objects.win.visible=true;
+				level++;
+				game_ended=true;
+			}
+			
+			
+			this.sec_check++;
+		}
+
+		//добавляем шары
+		if (this.baloons_sent<this.baloons_cnt)
+		{
+			if(game_tick/g_spd>this.prv_baloon_send+0.7)
+			{
+				this.send_baloon();
+				this.baloons_sent++;
+				this.prv_baloon_send=game_tick;		
+			}			
+		}
+
+
 		
 		//возвращаем назад стрелу
 		if (objects.arrow.visible==false)
@@ -356,8 +493,7 @@ class screen_1_class
 						if (d<30)
 						{
 							objects.baloons[i].visible=false;		
-							objects.arrows[k].visible=false;
-							this.send_message(k+" hit " + i);
+							bursted_baloons++;
 						}					
 					
 					}
@@ -367,7 +503,7 @@ class screen_1_class
 			
 		
 		
-		game_tick += 0.01666666;	
+		game_tick += 0.01666666*g_spd;	
 	}	
 
 }
@@ -549,7 +685,7 @@ function load()
 	
 	function load_complete()
 	{
-		
+
 		
 		var elem = document.getElementById('myProgress');
 		elem.parentNode.removeChild(elem);
