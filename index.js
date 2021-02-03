@@ -5,13 +5,17 @@ g_process=function(){};
 
 
 
-var path=[[],[]];
-path[0]=[[-10,200],[126,199],[300,240],[370,275],[410,330],[420,465],[410,590],[380,640],[320,680],[220,700],[130,680],[70,640],[40,580],[30,450],[40,330],[90,280],[170,240],[344,199],[470,200]];
-
-path[1]=[[-10,100],[470,100]];
+var path=[[-10,170],[120,170],[190,200],[215,240],[180,270],[90,280],[50,330],[40,410],[40,540],[70,630],[140,680],[220,700],[295,700],[360,670],[400,620],[420,550],[430,420],[410,310],[350,270],[300,260],[280,235],[290,200],[350,170],[470,170]];
 
 
-var l_info=[[10,20,5],[12,22,5],[14,24,5],[16,26,5],[18,28,5],[20,30,6],[22,32,6],[24,34,6],[26,36,6],[28,38,6],[30,40,7],[32,42,7],[34,44,7],[36,46,7],[38,48,7],[40,50,8],[42,52,8],[44,54,8],[46,56,8],[48,58,8],[50,60,9],[52,62,9],[54,64,9],[56,66,9],[58,68,9]];
+var l_info=[[10,20,5,0],[12,22,5,0.02],[14,24,5,0.04],[16,26,5,0.06],[18,28,5,0.08],[20,30,6,0.1],[22,32,6,0.12],[24,34,6,0.14],[26,36,6,0.16],[28,38,6,0.18],[30,40,7,0.2],[32,42,7,0.22],[34,44,7,0.24],[36,46,7,0.26],[38,48,7,0.28],[40,50,8,0.3],[42,52,8,0.32],[44,54,8,0.34],[46,56,8,0.36],[48,58,8,0.38],[50,60,9,0.4],[52,62,9,0.42],[54,64,9,0.44],[56,66,9,0.46],[58,68,9,0.48]];
+
+
+//сосотяния шара
+b_simple=0;
+b_bonus_arrows=1;
+b_bonus_slow=2;
+b_brick=3;
 
 
 class message_class extends PIXI.Sprite
@@ -91,41 +95,35 @@ class baloon_class extends PIXI.Sprite
 		this.dx=0;
 		this.dy=0;
 		this.spd=1.5;
-		this.type=0;
+		this.type=b_simple;
 		this.is_slow_down=false;
 		this.slow_down_start=0;
 		
-		this.path_id=0;
+		this.sec_check=0;
 		
 		this.tar_x=0;
 		this.tar_y=0;
 	}
 	
-	send(type)
+	send(brick_prob)
 	{			
 	
-		this.type=type;
-		if (type==0)
+		if (Math.random()<brick_prob)
 		{
-			this.texture=game_res.resources['baloon'].texture;	
-			this.path_id=0;			
+			this.type=b_brick;
+			this.texture=game_res.resources['brick_baloon'].texture;			
 		}
+		else
+		{
+			this.type=b_simple;
+			this.texture=game_res.resources['baloon'].texture;		
+		}
+			
+		
 
-		if (type==1)
-		{
-			this.texture=game_res.resources['baloon_bonus_arrows'].texture;		
-			this.path_id=1;				
-		}
 
-		if (type==2)
-		{
-			this.texture=game_res.resources['baloon_bonus_slow'].texture;	
-			this.path_id=1;				
-		}
-	
-	
-		this.x=path[this.path_id][0][0];
-		this.y=path[this.path_id][0][1];
+		this.x=path[0][0];
+		this.y=path[0][1];
 		this.visible=true;
 		this.tar_node=0;
 		this.dx=0;
@@ -134,20 +132,24 @@ class baloon_class extends PIXI.Sprite
 		this.is_slow_down=false;
 		this.slow_down_start=0;
 		
-		this.total_path_len=this.total_path();
+		this.sec_check=game_tick;
+		this.send_time=game_tick;
+		this.bonus_time=0;
+		
+		//this.total_path_len=this.total_path();
 
 		this.retarget();	
-
 	}
-		
+	
+	/*
 	total_path()
 	{
 		
         var dist_on_path = 0;
-        for (var p = 0; p < path[this.path_id].length - 1; p++)
+        for (var p = 0; p < path.length - 1; p++)
 		{
-			var dx = path[this.path_id][p + 1][0] - path[this.path_id][p][0];
-			var dy = path[this.path_id][p + 1][1] - path[this.path_id][p][1];
+			var dx = path[p + 1][0] - path[p][0];
+			var dy = path[p + 1][1] - path[p][1];
 			var d = Math.sqrt(dx * dx + dy * dy);
 			dist_on_path += d;
         }
@@ -158,26 +160,27 @@ class baloon_class extends PIXI.Sprite
 	dist_traveled()
 	{
         var dist_on_path = 0;
-        for (var p = 0; p < path[this.path_id].length - 1; p++)
+        for (var p = 0; p < path.length - 1; p++)
 		{
             if (p == (this.tar_node - 1))
 			{
-                var dx = this.x - path[this.path_id][p][0];
-                var dy = this.y - path[this.path_id][p][1];
+                var dx = this.x - path[p][0];
+                var dy = this.y - path[p][1];
                 var d = Math.sqrt(dx * dx + dy * dy);
                 dist_on_path += d;
                 return dist_on_path;
             }
             else
 			{
-                var dx = path[this.path_id][p + 1][0] - path[this.path_id][p][0];
-                var dy = path[this.path_id][p + 1][1] - path[this.path_id][p][1];
+                var dx = path[p + 1][0] - path[p][0];
+                var dy = path[p + 1][1] - path[p][1];
                 var d = Math.sqrt(dx * dx + dy * dy);
                 dist_on_path += d;
             }
         }
     }
-		
+	*/
+	
 	slow_down()
 	{
 		
@@ -190,16 +193,15 @@ class baloon_class extends PIXI.Sprite
 	retarget()
 	{
 		this.tar_node++;		
-		if (this.tar_node==path[this.path_id].length)
+		if (this.tar_node==path.length)
 		{
-			if (this.type==0)
-				screen_1.decrease_life();
+			screen_1.decrease_life();
 			this.visible=false;			
 			return;
 		}
 
-		this.tar_x=path[this.path_id][this.tar_node][0]+Math.random()*20-10;
-		this.tar_y=path[this.path_id][this.tar_node][1]+Math.random()*20-10;
+		this.tar_x=path[this.tar_node][0]+Math.random()*20-10;
+		this.tar_y=path[this.tar_node][1]+Math.random()*20-10;
 		
 		var dx=this.tar_x-this.x;
 		var dy=this.tar_y-this.y;
@@ -209,18 +211,45 @@ class baloon_class extends PIXI.Sprite
 		this.dy=dy/d;		
 	}
 	
+	turn_to_simple()
+	{
+		
+		this.type=b_simple;
+		this.texture=game_res.resources['baloon'].texture;	
+		
+	}
+	
 	process()
 	{				
 		if (this.visible==false)
 			return;
 		
 		
+		//секундная проверка и превращение
+		if (game_tick>this.sec_check+1)
+		{			
+			if (this.type==b_simple)
+			{
+				if (Math.random()>0.97)
+				{
+					if (Math.random()>0.5)
+					{
+						this.type=b_bonus_arrows;
+						this.texture=game_res.resources['baloon_bonus_arrows'].texture;	
+					}
+					else
+					{
+						this.type=b_bonus_slow;
+						this.texture=game_res.resources['baloon_bonus_slow'].texture;	
+					}
+
+					this.bonus_time=game_tick;
+				}			
+			}
+			this.sec_check=game_tick;
+		}
 		
-		//подсвечиваем в зависимости от пройденного пути
-		var d_traveled=this.dist_traveled();
-		var k=d_traveled/this.total_path_len;
-		this.tint=PIXI.utils.rgb2hex([k, k, k]);
-		
+	
 		//проверяем завершение замедления
 		if (this.is_slow_down==true)
 		{
@@ -229,6 +258,16 @@ class baloon_class extends PIXI.Sprite
 				this.is_slow_down=false;
 				this.spd=1.5;				
 			}		
+		}
+		
+		//превращаем бонусные шары в обычные
+		if (this.type==b_bonus_arrows || this.type==b_bonus_slow)
+		{
+			if (game_tick>this.bonus_time+4)
+			{
+				this.texture=game_res.resources['baloon'].texture;
+				this.type=b_simple;
+			}			
 		}
 		
 		this.x+=this.dx*this.spd*g_spd;
@@ -339,32 +378,21 @@ class screen_1_class
 	constructor(id)
 	{
 		this.id=id;
-		this.last_send_time=0;
+
+		
 	}
 	
-	send_baloon(bonus=false)
+	send_baloon()
 	{		
 		
 		for (var i=0;i<objects.baloons.length;i++)
 		{
 			if (objects.baloons[i].visible==false)
 			{
-				
-				if (bonus==true)
-				{
-					var r_num=Math.random();
-					
-					if (r_num>0.5)
-						objects.baloons[i].send(1);					
-					else
-						objects.baloons[i].send(2);						
-				}
-				else
-				{
-					objects.baloons[i].send(0);		
-					this.prv_baloon_send=game_tick;	
-					this.baloons_sent++;
-				}				
+
+				objects.baloons[i].send(this.brick_prob);						
+				this.prv_baloon_send=game_tick;	
+				this.baloons_sent++;				
 
 				return;
 			}			
@@ -439,12 +467,20 @@ class screen_1_class
 		this.arrows_cnt=l_info[level][1];
 		objects.arrows_info_text.text="X"+this.arrows_cnt
 		
+		//вероятность кирпичного шара
+		this.brick_prob=l_info[level][3];
+		
 		//обозначаем уровень		
 		objects.level_note.text="Level "+level;
 		
 		//устанавливаем количество жизней
 		this.life=l_info[level][2];
 		objects.life_info.text="X"+this.life;
+		
+		//для бонусов
+		this.last_send_time=0;
+		this.last_hit=0;
+		this.hit_row_size=1;
 	}
 	
 	send_arrow()
@@ -491,8 +527,8 @@ class screen_1_class
 	{
 		
 		//крутим дартц
-		objects.bow.rotation-=0.05*g_spd;
-		objects.arrow.rotation-=0.05*g_spd;
+		objects.bow.rotation+=0.05*g_spd;
+		objects.arrow.rotation+=0.05*g_spd;
 		
 		//обрабатываем шары
 		objects.baloons.forEach(e=>e.process());
@@ -500,19 +536,13 @@ class screen_1_class
 		//обрабатываем стрелки
 		objects.arrows.forEach(e=>e.process());
 		
-		//обрабатываем события
-		if (game_tick>this.events[this.event_id][0])
-		{
-			eval(this.events[this.event_id][1]);
-			this.event_id++;		
-		}			
-		
+
 		//добавляем шары
 		if (this.baloons_sent<this.baloons_cnt)
 		{
 			if(game_tick>this.prv_baloon_send+0.7)
 			{
-				this.send_baloon();	
+				this.send_baloon();		
 			}			
 		}
 	
@@ -520,14 +550,13 @@ class screen_1_class
 		game_tick += 0.01666666*g_spd;	
 		
 		
+		//завершаем начальный цикл
 		if (game_tick/g_spd>1)
 		{
-			g_spd=1;
-			
+			g_spd=1;			
 			//включаем нажимание кнопки
 			objects.bcg.pointerdown=function(){screen_1.send_arrow()};
-			g_process=this.process.bind(this);
-			
+			g_process=this.process.bind(this);			
 		}
 		
 	}
@@ -542,8 +571,8 @@ class screen_1_class
 	{
 		
 		//крутим дартц
-		objects.bow.rotation-=0.05*g_spd;
-		objects.arrow.rotation-=0.05*g_spd;
+		objects.bow.rotation+=0.05*g_spd;
+		objects.arrow.rotation+=0.05*g_spd;
 		
 		//обрабатываем шары
 		objects.baloons.forEach(e=>e.process());
@@ -590,7 +619,7 @@ class screen_1_class
 			this.sec_check++;
 		}
 
-		//добавляем обычные шары
+		//добавляем шары
 		if (this.baloons_sent<this.baloons_cnt)
 		{
 			if(game_tick/g_spd>this.prv_baloon_send+0.7)
@@ -600,13 +629,7 @@ class screen_1_class
 		}
 
 
-		//добавляем бонусы в соответствующее время
-		if(game_tick>this.prv_bonus_time+6)
-		{
-			
-			this.send_baloon(true);		
-			this.prv_bonus_time=game_tick;
-		}
+
 
 		
 		//возвращаем назад стрелу
@@ -623,6 +646,7 @@ class screen_1_class
 		}
 		
 		//обрабатываем попадания
+		var hited=0;
 		for(var i=0;i<objects.baloons.length;i++)
 		{
 			if(objects.baloons[i].visible==true)
@@ -638,17 +662,33 @@ class screen_1_class
 						d=Math.sqrt(d);
 						if (d<30)
 						{
-							objects.baloons[i].visible=false;	
-							if (objects.baloons[i].type==0)
-								bursted_baloons++;							
-							if (objects.baloons[i].type==1)
-								this.add_arrows(3);
-							if (objects.baloons[i].type==2)
-								this.slow_baloons();
 							
-							
+							switch(objects.baloons[i].type)
+							{
+								
+								case b_brick:
+									objects.baloons[i].turn_to_simple();
+									objects.arrows[k].visible=false;							
+								break;
+								
+								case b_simple:
+									objects.baloons[i].visible=false;	
+									bursted_baloons++;									
+								break;
+								
+								case b_bonus_arrows:
+									objects.baloons[i].visible=false;	
+									this.add_arrows(3);		
+									bursted_baloons++;							
+								break;
+								
+								case b_bonus_slow:
+									objects.baloons[i].visible=false;	
+									this.slow_baloons();
+									bursted_baloons++;								
+								break;
+							}
 						}					
-					
 					}
 				}
 			}
