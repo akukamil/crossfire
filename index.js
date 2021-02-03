@@ -133,12 +133,50 @@ class baloon_class extends PIXI.Sprite
 		this.spd=1.5;
 		this.is_slow_down=false;
 		this.slow_down_start=0;
+		
+		this.total_path_len=this.total_path();
 
 		this.retarget();	
 
 	}
 		
-	
+	total_path()
+	{
+		
+        var dist_on_path = 0;
+        for (var p = 0; p < path[this.path_id].length - 1; p++)
+		{
+			var dx = path[this.path_id][p + 1][0] - path[this.path_id][p][0];
+			var dy = path[this.path_id][p + 1][1] - path[this.path_id][p][1];
+			var d = Math.sqrt(dx * dx + dy * dy);
+			dist_on_path += d;
+        }
+		return dist_on_path;
+		
+	}	
+		
+	dist_traveled()
+	{
+        var dist_on_path = 0;
+        for (var p = 0; p < path[this.path_id].length - 1; p++)
+		{
+            if (p == (this.tar_node - 1))
+			{
+                var dx = this.x - path[this.path_id][p][0];
+                var dy = this.y - path[this.path_id][p][1];
+                var d = Math.sqrt(dx * dx + dy * dy);
+                dist_on_path += d;
+                return dist_on_path;
+            }
+            else
+			{
+                var dx = path[this.path_id][p + 1][0] - path[this.path_id][p][0];
+                var dy = path[this.path_id][p + 1][1] - path[this.path_id][p][1];
+                var d = Math.sqrt(dx * dx + dy * dy);
+                dist_on_path += d;
+            }
+        }
+    }
 		
 	slow_down()
 	{
@@ -176,6 +214,12 @@ class baloon_class extends PIXI.Sprite
 		if (this.visible==false)
 			return;
 		
+		
+		
+		//подсвечиваем в зависимости от пройденного пути
+		var d_traveled=this.dist_traveled();
+		var k=d_traveled/this.total_path_len;
+		this.tint=PIXI.utils.rgb2hex([k, k, k]);
 		
 		//проверяем завершение замедления
 		if (this.is_slow_down==true)
@@ -437,6 +481,8 @@ class screen_1_class
 	decrease_life()
 	{
 		this.life--;
+		if (this.life<0)
+			this.life=0;
 		objects.life_info.text="X"+this.life;
 		this.passed_baloons++;
 	}
@@ -533,7 +579,7 @@ class screen_1_class
 				game_ended=true;
 			}
 			
-			if (this.arrows_cnt==0)
+			if (this.arrows_cnt==0 && game_ended==false)
 			{
 				objects.bcg.pointerdown=null;
 				g_spd=5;
