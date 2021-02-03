@@ -533,6 +533,13 @@ class screen_1_class
 				game_ended=true;
 			}
 			
+			if (this.arrows_cnt==0)
+			{
+				objects.bcg.pointerdown=null;
+				g_spd=5;
+				g_process=this.process_finish.bind(this);
+			}
+			
 			
 			this.sec_check++;
 		}
@@ -605,6 +612,40 @@ class screen_1_class
 		
 		game_tick += 0.01666666*g_spd;	
 	}	
+
+	process_finish()
+	{
+		
+		//крутим дартц
+		objects.bow.rotation-=0.05*g_spd;
+		objects.arrow.rotation-=0.05*g_spd;
+		
+		//обрабатываем шары
+		objects.baloons.forEach(e=>e.process());
+		
+		//обрабатываем стрелки
+		objects.arrows.forEach(e=>e.process());
+		
+		
+		if (this.life==0 && game_ended==false)
+		{
+			objects.game_over.visible=true;				
+			game_ended=true;
+		}
+	
+		if ((bursted_baloons+this.passed_baloons)==this.baloons_cnt && game_ended==false)
+		{				
+			objects.win.visible=true;
+			level++;
+			game_ended=true;
+		}
+		
+		game_tick += 0.01666666*g_spd;	
+					
+		
+	}
+	
+
 
 }
 
@@ -790,6 +831,8 @@ function load()
 		
 		document.getElementById("demo").innerHTML = ""
 		app = new PIXI.Application({width:M_WIDTH, height:M_HEIGHT,antialias:true,backgroundColor : 0x060600});
+		app.renderer.autoResize=true;
+		app.renderer.resize(window.innerWidth,window.innerHeight);
 		window.addEventListener("resize", resize());
 
 		
