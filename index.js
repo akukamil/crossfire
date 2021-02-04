@@ -16,7 +16,7 @@ b_simple=0;
 b_bonus_arrows=1;
 b_bonus_slow=2;
 b_brick=3;
-
+b_bonus_hand=4;
 
 class message_class extends PIXI.Sprite
 {
@@ -225,23 +225,38 @@ class baloon_class extends PIXI.Sprite
 			return;
 		
 		
-		//секундная проверка и превращение
+		//секундная проверка и превращение в бонусы
 		if (game_tick>this.sec_check+1)
 		{			
 			if (this.type==b_simple)
 			{
 				if (Math.random()>0.97)
 				{
-					if (Math.random()>0.5)
+					
+					var r_int=Math.floor(Math.random() * 3);
+					
+					switch(r_int)
 					{
+						
+						case 0:
 						this.type=b_bonus_arrows;
 						this.texture=game_res.resources['baloon_bonus_arrows'].texture;	
-					}
-					else
-					{
+						break;
+						
+						
+						case 1:
 						this.type=b_bonus_slow;
 						this.texture=game_res.resources['baloon_bonus_slow'].texture;	
+						break;	
+						
+						
+						case 2:
+						this.type=b_bonus_hand;
+						this.texture=game_res.resources['baloon_bonus_hand'].texture;	
+						break;
+						
 					}
+
 
 					this.bonus_time=game_tick;
 				}			
@@ -249,7 +264,6 @@ class baloon_class extends PIXI.Sprite
 			this.sec_check=game_tick;
 		}
 		
-	
 		//проверяем завершение замедления
 		if (this.is_slow_down==true)
 		{
@@ -299,8 +313,8 @@ class arrow_class extends PIXI.Sprite
 		this.x=x;
 		this.y=y;
 		this.rotation=ang;
-		this.dx=Math.sin(this.rotation);
-		this.dy=-Math.cos(this.rotation);
+		this.dx=Math.cos(this.rotation);
+		this.dy=Math.sin(this.rotation);
 		this.state="go";
 		this.visible=true;	
 	}
@@ -377,9 +391,7 @@ class screen_1_class
 {
 	constructor(id)
 	{
-		this.id=id;
-
-		
+		this.id=id;		
 	}
 	
 	send_baloon()
@@ -477,6 +489,10 @@ class screen_1_class
 		this.life=l_info[level][2];
 		objects.life_info.text="X"+this.life;
 		
+		//игра рукой
+		this.hand_play=false;
+		this.hand_play_start=0;
+		
 		//для бонусов
 		this.last_send_time=0;
 		this.last_hit=0;
@@ -513,7 +529,49 @@ class screen_1_class
 		
 
 	}
-			
+		
+	send_arrow_by_hand(e)
+	{
+		
+		
+		if (this.arrows_cnt==0)
+			return;
+		
+		//запоминаем время выстрела
+		this.last_send_time=game_tick;
+		
+		//определяем угол лука
+		var x=e.data.global.x/app.stage.scale.x;
+		var y=e.data.global.y/app.stage.scale.y;
+		
+		var dx=x-objects.bow.x;
+		var dy=y-objects.bow.y;
+		var dir = Math.atan2(dy, dx);
+		objects.bow.rotation=dir;
+		
+		//ищем свободную стрелу для запуска
+		for (var i=0;i<objects.arrows.length;i++)
+		{
+			if (objects.arrows[i].visible==false)
+			{				
+				objects.arrows[i].send(objects.bow.x,objects.bow.y,objects.bow.rotation);
+				break;
+			}
+		}
+		
+		//высключаем базовую стрелу и лук и нажатие отменяем
+		objects.arrow.visible=false;
+		objects.bow.texture=game_res.resources['bow2'].texture;
+		objects.bow.pointerdown=null;
+		
+		this.arrows_cnt--;
+
+		//обновляем инфор о количестве стрел
+		objects.arrows_info_text.text="X"+this.arrows_cnt
+		
+		
+	}
+		
 	decrease_life()
 	{
 		this.life--;
@@ -526,9 +584,13 @@ class screen_1_class
 	process_init()
 	{
 		
-		//крутим дартц
-		objects.bow.rotation+=0.05*g_spd;
-		objects.arrow.rotation+=0.05*g_spd;
+		//крутим дартц если это не игра рукой
+		if (this.hand_play==false)
+		{
+			objects.bow.rotation+=0.05*g_spd;
+			objects.arrow.rotation+=0.05*g_spd;			
+		}
+
 		
 		//обрабатываем шары
 		objects.baloons.forEach(e=>e.process());
@@ -566,28 +628,34 @@ class screen_1_class
 		this.arrows_cnt+=cnt;
 		objects.arrows_info_text.text="X"+this.arrows_cnt
 	}
-	
+			
 	process()
 	{
 		
-		//крутим дартц
-		objects.bow.rotation+=0.05*g_spd;
-		objects.arrow.rotation+=0.05*g_spd;
+		//крутим дартц если это не игра рукой
+		if (this.hand_play==false)
+		{
+			objects.bow.rotation+=0.05*g_spd;
+			objects.arrow.rotation+=0.05*g_spd;			
+		}
+		else
+		{			
+			if (game_tick>hand_play_start+3)
+				this.hand_play=false;			
+		}
 		
 		//обрабатываем шары
 		objects.baloons.forEach(e=>e.process());
 		
 		//обрабатываем стрелки
 		objects.arrows.forEach(e=>e.process());
-		
-	
+			
 		//обрабатываем события
 		if (game_tick>this.events[this.event_id][0])
 		{
 			eval(this.events[this.event_id][1]);
 			this.event_id++;		
 		}			
-
 
 		//секундная проверка событий
 		if (game_tick>this.sec_check)
@@ -628,10 +696,6 @@ class screen_1_class
 			}			
 		}
 
-
-
-
-		
 		//возвращаем назад стрелу
 		if (objects.arrow.visible==false)
 		{
@@ -687,6 +751,15 @@ class screen_1_class
 									this.slow_baloons();
 									bursted_baloons++;								
 								break;
+								
+								case b_bonus_hand:
+									objects.baloons[i].visible=false;	
+									this.hand_play=true;
+									this.hand_play_start=game_tick;
+									objects.bcg.pointerdown=screen_1.send_arrow_by_hand.bind(this);
+									bursted_baloons++;								
+								break;
+								
 							}
 						}					
 					}
