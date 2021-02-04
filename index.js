@@ -640,7 +640,7 @@ class screen_1_class
 		}
 		else
 		{			
-			if (game_tick>hand_play_start+3)
+			if (game_tick>this.hand_play_start+3)
 				this.hand_play=false;			
 		}
 		
