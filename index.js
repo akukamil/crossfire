@@ -233,7 +233,7 @@ class baloon_class extends PIXI.Sprite
 				if (Math.random()>0.97)
 				{
 					
-					var r_int=Math.floor(Math.random() * 3);
+					var r_int=2;//Math.floor(Math.random() * 3);
 					
 					switch(r_int)
 					{
@@ -641,7 +641,11 @@ class screen_1_class
 		else
 		{			
 			if (game_tick>this.hand_play_start+3)
-				this.hand_play=false;			
+			{
+				objects.bcg.pointerdown=function(){screen_1.send_arrow()};
+				this.hand_play=false;	
+			}
+						
 		}
 		
 		//обрабатываем шары
