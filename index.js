@@ -8,7 +8,8 @@ g_process=function(){};
 var path=[[-10,170],[120,170],[190,200],[215,240],[180,270],[90,280],[50,330],[40,410],[40,540],[70,630],[140,680],[220,700],[295,700],[360,670],[400,620],[420,550],[430,420],[410,310],[350,270],[300,260],[280,235],[290,200],[350,170],[470,170]];
 
 
-var l_info=[[10,20,5,0],[12,22,5,0.02],[14,24,5,0.04],[16,26,5,0.06],[18,28,5,0.08],[20,30,6,0.1],[22,32,6,0.12],[24,34,6,0.14],[26,36,6,0.16],[28,38,6,0.18],[30,40,7,0.2],[32,42,7,0.22],[34,44,7,0.24],[36,46,7,0.26],[38,48,7,0.28],[40,50,8,0.3],[42,52,8,0.32],[44,54,8,0.34],[46,56,8,0.36],[48,58,8,0.38],[50,60,9,0.4],[52,62,9,0.42],[54,64,9,0.44],[56,66,9,0.46],[58,68,9,0.48]];
+var l_info=[[10,20,3,0],[12,22,3,0.02],[14,24,3,0.04],[16,26,3,0.06],[18,28,3,0.08],[20,30,3,0.1],[22,32,3,0.12],[24,34,3,0.14],[26,36,3,0.16],[28,38,3,0.18],[30,40,3,0.2],[32,42,3,0.22],[34,44,3,0.24],[36,46,3,0.26],[38,48,3,0.28],[40,50,3,0.3],[42,52,3,0.32],[44,54,3,0.34],[46,56,3,0.36],[48,58,3,0.38],[50,60,3,0.4],[52,62,3,0.42],[54,64,3,0.44],[56,66,3,0.46],[58,68,3,0.48]];
+
 
 
 
@@ -878,13 +879,35 @@ class screen_1_class
 			level++;	
 			objects.win.visible=true;
 			
-			objects.star1.visible=true;
-			objects.star2.visible=true;
-			objects.star3.visible=true;
+			if(this.passed_baloons==0)
+			{
+				objects.star1.visible=true;
+				objects.star2.visible=true;
+				objects.star3.visible=true;
+				
+				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
+				c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
+				c.add_bounce(objects.star3,-50,objects.star1.sy,0.01);
+			}				
 			
-			c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
-			c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
-			c.add_bounce(objects.star3,-50,objects.star1.sy,0.01);
+			if(this.passed_baloons==1)
+			{
+				objects.star1.visible=true;
+				objects.star2.visible=true;
+				
+				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
+				c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
+			}
+			
+			if(this.passed_baloons==2)
+			{
+				objects.star1.visible=true;
+				
+				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
+			}
+			
+			
+
 
 			this.init_parameters=false;
 		}
@@ -928,9 +951,9 @@ class screen_1_class
 	
 		if ((bursted_baloons+this.passed_baloons)==this.baloons_cnt && game_ended==false)
 		{				
-			objects.win.visible=true;
-			level++;
-			game_ended=true;
+			game_ended=true;				
+			g_process=this.process_win.bind(this);
+			this.init_parameters=true;
 		}
 		
 		game_tick += 0.01666666*g_spd;	
