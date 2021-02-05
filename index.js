@@ -20,6 +20,11 @@ b_bonus_slow=2;
 b_brick=3;
 b_bonus_hand=4;
 
+
+//анимации
+const a_bounce=0;
+const a_elastic=1;
+
 class anim_class
 {
 	
@@ -29,7 +34,6 @@ class anim_class
 		this.start_time=[];
 		this.delta=[];
 		
-		const a_bounce=0;
 
 
 	}
@@ -58,6 +62,18 @@ class anim_class
 		}
 	}
 	
+	
+	elastic(x)
+	{
+	const c4 = (2 * Math.PI) / 3;
+
+	return x === 0
+	? 0
+	: x === 1
+	? 1
+	: Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
+	}
+	
 	add_bounce(spr,y_start,y_end,spd)
 	{		
 		//ищем свободный слот для анимации
@@ -66,11 +82,26 @@ class anim_class
 			if (this.anim_array[i].length==0)
 			{
 				var delta=y_end-y_start;
-				this.anim_array[i]=[spr,y_start,delta,0,spd]
+				this.anim_array[i]=[spr,y_start,delta,0,spd,a_bounce]
 				return;
 			}
 		}	
 	}
+	
+	add_elastic(spr,x_start,x_end,spd)
+	{		
+		//ищем свободный слот для анимации
+		for (var i=0;i<this.anim_array.length;i++)
+		{
+			if (this.anim_array[i].length==0)
+			{
+				var delta=x_end-x_start;
+				this.anim_array[i]=[spr,x_start,delta,0,spd,a_elastic]
+				return;
+			}
+		}	
+	}
+	
 	
 	process()
 	{
@@ -78,16 +109,40 @@ class anim_class
 		{
 			if (this.anim_array[i].length!=0)
 			{
-								
-				if (this.anim_array[i][3]<1)
-				{	
-					this.anim_array[i][0].y=this.anim_array[i][1]+this.bounce(this.anim_array[i][3])*this.anim_array[i][2];			
-					this.anim_array[i][3]+=this.anim_array[i][4];			
-				}
-				else
+				
+				var a_type=this.anim_array[i][5];
+				
+				switch (a_type)
 				{
-					this.anim_array[i]=[];
-				}			
+					
+					case a_bounce:
+						if (this.anim_array[i][3]<1)
+						{	
+							this.anim_array[i][0].y=this.anim_array[i][1]+this.bounce(this.anim_array[i][3])*this.anim_array[i][2];			
+							this.anim_array[i][3]+=this.anim_array[i][4];			
+						}
+						else
+						{
+							this.anim_array[i]=[];
+						}
+					break;
+					
+					case a_elastic:
+						if (this.anim_array[i][3]<1)
+						{	
+							this.anim_array[i][0].x=this.anim_array[i][1]+this.elastic(this.anim_array[i][3])*this.anim_array[i][2];			
+							this.anim_array[i][3]+=this.anim_array[i][4];			
+						}
+						else
+						{
+							this.anim_array[i]=[];
+						}
+					break;
+					
+					
+				}
+								
+			
 			}
 		}
 	}
@@ -879,6 +934,10 @@ class screen_1_class
 			level++;	
 			objects.win.visible=true;
 			
+				objects.bonus_10.visible=true;				
+				c.add_elastic(objects.bonus_10,-50,objects.bonus_10.sx,0.01);
+			
+			
 			if(this.passed_baloons<3)
 			{
 				objects.star1.visible=true;				
@@ -896,16 +955,15 @@ class screen_1_class
 				objects.star3.visible=true;
 				c.add_bounce(objects.star3,-50,objects.star1.sy,0.01);
 			}				
-			
-
-			
-
-			
-			
 
 
 			this.init_parameters=false;
 		}
+		
+		
+		
+		
+		
 		
 
 		
