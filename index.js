@@ -1020,6 +1020,7 @@ class screen_1_class
 		
 		if (this.life==0 && game_ended==false)
 		{
+			arrows_as_bonus=0;
 			objects.game_over.visible=true;				
 			game_ended=true;
 		}
