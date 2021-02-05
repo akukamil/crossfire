@@ -8,10 +8,12 @@ g_process=function(){};
 var path=[[-10,170],[120,170],[190,200],[215,240],[180,270],[90,280],[50,330],[40,410],[40,540],[70,630],[140,680],[220,700],[295,700],[360,670],[400,620],[420,550],[430,420],[410,310],[350,270],[300,260],[280,235],[290,200],[350,170],[470,170]];
 
 
-var l_info=[[10,20,3,0],[12,22,3,0.02],[14,24,3,0.04],[16,26,3,0.06],[18,28,3,0.08],[20,30,3,0.1],[22,32,3,0.12],[24,34,3,0.14],[26,36,3,0.16],[28,38,3,0.18],[30,40,3,0.2],[32,42,3,0.22],[34,44,3,0.24],[36,46,3,0.26],[38,48,3,0.28],[40,50,3,0.3],[42,52,3,0.32],[44,54,3,0.34],[46,56,3,0.36],[48,58,3,0.38],[50,60,3,0.4],[52,62,3,0.42],[54,64,3,0.44],[56,66,3,0.46],[58,68,3,0.48]];
+var l_info=[[10,20,3,0],[12,21,3,0.02],[14,22,3,0.04],[16,23,3,0.06],[18,24,3,0.08],[20,25,3,0.1],[22,26,3,0.12],[24,27,3,0.14],[26,28,3,0.16],[28,29,3,0.18],[30,30,3,0.2],[32,31,3,0.22],[34,32,3,0.24],[36,33,3,0.26],[38,34,3,0.28],[40,35,3,0.3],[42,36,3,0.32],[44,37,3,0.34],[46,38,3,0.36],[48,39,3,0.38],[50,40,3,0.4],[52,41,3,0.42],[54,42,3,0.44],[56,43,3,0.46],[58,44,3,0.48]];
 
 
 
+//это бонусы стрел после уровня
+arrows_as_bonus=0;
 
 //сосотяния шара
 b_simple=0;
@@ -582,8 +584,8 @@ class screen_1_class
 			
 		}
 				
-
-		
+				
+				
 		//секундная проверка событий
 		this.sec_check=1;				
 	
@@ -610,7 +612,7 @@ class screen_1_class
 		this.baloons_cnt=l_info[level][0];
 		
 		//устанавливаем начальное количество стрелки
-		this.arrows_cnt=l_info[level][1];
+		this.arrows_cnt=l_info[level][1]+arrows_as_bonus;
 		objects.arrows_info_text.text="X"+this.arrows_cnt
 		
 		//вероятность кирпичного шара
@@ -934,38 +936,58 @@ class screen_1_class
 			level++;	
 			objects.win.visible=true;
 			
-				objects.bonus_10.visible=true;				
-				c.add_elastic(objects.bonus_10,-50,objects.bonus_10.sx,0.01);
+
 			
 			
-			if(this.passed_baloons<3)
+			if(this.passed_baloons==2)
 			{
 				objects.star1.visible=true;				
 				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
+				
+				objects.bonus.visible=true;				
+				objects.bonus.texture=game_res.resources['bonus_1'].texture;
+				c.add_elastic(objects.bonus,-50,objects.bonus.sx,0.01);
+				
+				arrows_as_bonus=1;
 			}			
 			
-			if(this.passed_baloons<2)
+			if(this.passed_baloons==1)
 			{
+				objects.star1.visible=true;				
+				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
+				
 				objects.star2.visible=true;
 				c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
+				
+				objects.bonus.visible=true;				
+				objects.bonus.texture=game_res.resources['bonus_5'].texture;
+				c.add_elastic(objects.bonus,-50,objects.bonus.sx,0.01);
+				
+				arrows_as_bonus=5;
 			}			
 			
-			if(this.passed_baloons<1)
+			if(this.passed_baloons==0)
 			{
+				objects.star1.visible=true;				
+				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
+				
+				objects.star2.visible=true;
+				c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
+				
 				objects.star3.visible=true;
 				c.add_bounce(objects.star3,-50,objects.star1.sy,0.01);
+				
+				objects.bonus.visible=true;				
+				objects.bonus.texture=game_res.resources['bonus_10'].texture;
+				c.add_elastic(objects.bonus,-50,objects.bonus.sx,0.01);
+				
+				arrows_as_bonus=10;
 			}				
 
 
 			this.init_parameters=false;
 		}
 		
-		
-		
-		
-		
-		
-
 		
 		//обновляем анимации
 		c.process();
