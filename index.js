@@ -11,12 +11,91 @@ var path=[[-10,170],[120,170],[190,200],[215,240],[180,270],[90,280],[50,330],[4
 var l_info=[[10,20,5,0],[12,22,5,0.02],[14,24,5,0.04],[16,26,5,0.06],[18,28,5,0.08],[20,30,6,0.1],[22,32,6,0.12],[24,34,6,0.14],[26,36,6,0.16],[28,38,6,0.18],[30,40,7,0.2],[32,42,7,0.22],[34,44,7,0.24],[36,46,7,0.26],[38,48,7,0.28],[40,50,8,0.3],[42,52,8,0.32],[44,54,8,0.34],[46,56,8,0.36],[48,58,8,0.38],[50,60,9,0.4],[52,62,9,0.42],[54,64,9,0.44],[56,66,9,0.46],[58,68,9,0.48]];
 
 
+
 //сосотяния шара
 b_simple=0;
 b_bonus_arrows=1;
 b_bonus_slow=2;
 b_brick=3;
 b_bonus_hand=4;
+
+class anim_class
+{
+	
+	constructor()
+	{		
+		this.anim_array=[[],[],[],[],[],[],[],[],[],[],[],[],[],[]];		
+		this.start_time=[];
+		this.delta=[];
+		
+		const a_bounce=0;
+
+
+	}
+	
+	//это анимация прыгания
+	bounce(x)
+	{
+		const n1 = 7.5625;
+		const d1 = 2.75;
+
+		if (x < 1 / d1)
+		{
+			return n1 * x * x;
+		} 
+		else if (x < 2 / d1)
+		{
+			return n1 * (x -= 1.5 / d1) * x + 0.75;
+		}
+		else if (x < 2.5 / d1)
+		{
+			return n1 * (x -= 2.25 / d1) * x + 0.9375;
+		}
+		else
+		{
+			return n1 * (x -= 2.625 / d1) * x + 0.984375;
+		}
+	}
+	
+	add_bounce(spr,y_start,y_end,spd)
+	{		
+		//ищем свободный слот для анимации
+		for (var i=0;i<this.anim_array.length;i++)
+		{
+			if (this.anim_array[i].length==0)
+			{
+				var delta=y_end-y_start;
+				this.anim_array[i]=[spr,y_start,delta,0,spd]
+				return;
+			}
+		}	
+	}
+	
+	process()
+	{
+		for (var i=0;i<this.anim_array.length;i++)
+		{
+			if (this.anim_array[i].length!=0)
+			{
+								
+				if (this.anim_array[i][3]<1)
+				{	
+					this.anim_array[i][0].y=this.anim_array[i][1]+this.bounce(this.anim_array[i][3])*this.anim_array[i][2];			
+					this.anim_array[i][3]+=this.anim_array[i][4];			
+				}
+				else
+				{
+					this.anim_array[i]=[];
+				}			
+			}
+		}
+	}
+	
+}
+
+
+//это анимации
+c = new anim_class();
 
 class message_class extends PIXI.Sprite
 {
@@ -389,6 +468,7 @@ class screen_0_class
 
 class screen_1_class
 {
+	
 	constructor(id)
 	{
 		this.id=id;		
@@ -446,12 +526,10 @@ class screen_1_class
 			
 		}
 				
-		//функция процессинга
-		g_process=this.process_init.bind(this);
+
 		
 		//секундная проверка событий
-		this.sec_check=1;
-				
+		this.sec_check=1;				
 	
 		//карта событий
 		this.event_id=0;
@@ -497,6 +575,10 @@ class screen_1_class
 		this.last_send_time=0;
 		this.last_hit=0;
 		this.hit_row_size=1;
+		
+		//функция процессинга
+		this.init_parameters=true;
+		g_process=this.process_init.bind(this);
 	}
 	
 	send_arrow()
@@ -583,6 +665,11 @@ class screen_1_class
 	
 	process_init()
 	{
+		//инициируем все показатели
+		if (this.init_parameters==true)
+		{	
+			this.init_parameters=false;
+		}
 		
 		//крутим дартц если это не игра рукой
 		if (this.hand_play==false)
@@ -615,10 +702,8 @@ class screen_1_class
 		//завершаем начальный цикл
 		if (game_tick/g_spd>1)
 		{
-			g_spd=1;			
-			//включаем нажимание кнопки
-			objects.bcg.pointerdown=function(){screen_1.send_arrow()};
-			g_process=this.process.bind(this);			
+			g_process=this.process.bind(this);	
+			this.init_parameters=true;
 		}
 		
 	}
@@ -631,6 +716,16 @@ class screen_1_class
 			
 	process()
 	{
+		
+		//инициируем все показатели
+		if (this.init_parameters==true)
+		{	
+			g_spd=1;			
+			//включаем нажимание кнопки
+			objects.bcg.pointerdown=function(){screen_1.send_arrow()};
+			this.init_parameters=false;
+		}
+		
 		
 		//крутим дартц если это не игра рукой
 		if (this.hand_play==false)
@@ -674,19 +769,17 @@ class screen_1_class
 			}
 			
 			if ((bursted_baloons+this.passed_baloons)==this.baloons_cnt && game_ended==false)
-			{				
-				objects.win.visible=true;
-				level++;
-				game_ended=true;
+			{			
+				game_ended=true;				
+				g_process=this.process_win.bind(this);
+				this.init_parameters=true;
 			}
 			
 			if (this.arrows_cnt==0 && game_ended==false)
 			{
-				objects.bcg.pointerdown=null;
-				g_spd=5;
 				g_process=this.process_finish.bind(this);
+				this.init_parameters=true;
 			}
-			
 			
 			this.sec_check++;
 		}
@@ -776,8 +869,45 @@ class screen_1_class
 		game_tick += 0.01666666*g_spd;	
 	}	
 
+	process_win()
+	{
+		
+		//инициируем все показатели
+		if (this.init_parameters==true)
+		{	
+			level++;	
+			objects.win.visible=true;
+			
+			objects.star1.visible=true;
+			objects.star2.visible=true;
+			objects.star3.visible=true;
+			
+			c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
+			c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
+			c.add_bounce(objects.star3,-50,objects.star1.sy,0.01);
+
+			this.init_parameters=false;
+		}
+		
+
+		
+		//обновляем анимации
+		c.process();
+		
+		//таймер
+		game_tick += 0.01666666*g_spd;			
+	}
+
 	process_finish()
 	{
+		
+		//инициируем все показатели
+		if (this.init_parameters==true)
+		{	
+			objects.bcg.pointerdown=null;
+			g_spd=5;
+			this.init_parameters=false;
+		}
 		
 		//крутим дартц
 		objects.bow.rotation-=0.05*g_spd;
@@ -807,8 +937,6 @@ class screen_1_class
 					
 		
 	}
-	
-
 
 }
 
