@@ -879,32 +879,27 @@ class screen_1_class
 			level++;	
 			objects.win.visible=true;
 			
-			if(this.passed_baloons==0)
+			if(this.passed_baloons==2)
 			{
-				objects.star1.visible=true;
-				objects.star2.visible=true;
-				objects.star3.visible=true;
-				
+				objects.star1.visible=true;				
 				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
-				c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
-				c.add_bounce(objects.star3,-50,objects.star1.sy,0.01);
-			}				
+			}			
 			
 			if(this.passed_baloons==1)
 			{
-				objects.star1.visible=true;
 				objects.star2.visible=true;
-				
-				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
 				c.add_bounce(objects.star2,-50,objects.star1.sy,0.015);
-			}
+			}			
 			
-			if(this.passed_baloons==2)
+			if(this.passed_baloons==0)
 			{
-				objects.star1.visible=true;
-				
-				c.add_bounce(objects.star1,-50,objects.star1.sy,0.02);
-			}
+				objects.star3.visible=true;
+				c.add_bounce(objects.star3,-50,objects.star1.sy,0.01);
+			}				
+			
+
+			
+
 			
 			
 
