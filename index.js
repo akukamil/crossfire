@@ -111,7 +111,7 @@ class anim_class
 	: Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
 	}
 	
-	add_anim_scale(spr,anim,start,spd,hide_on_end=false)
+	add_anim_scale(spr,anim,scl_x0, scl_x1, scl_y0, scl_y1,spd,hide_on_end=false)
 	{
 		//ищем свободный слот для анимации
 		for (var i=0;i<this.anim_array.length;i++)
@@ -143,7 +143,9 @@ class anim_class
 				spr.visible=true;
 				
 				//вторым параметром записываем прямо ссылку на функцию
-				this.anim_array[i]=[a_scale,spr,func,start,spd,hide_on_end]
+				var dx=scl_x1-scl_x0;
+				var dy=scl_y1-scl_y0;
+				this.anim_array[i]=[a_scale,spr,func,0,scl_x0,scl_y0,dx,dy,spd,hide_on_end]
 				return;
 			}
 		}
@@ -255,15 +257,15 @@ class anim_class
 				//это анимации чисто масштаба
 				if (this.anim_array[i][0]===a_scale)
 				{
-					if (this.anim_array[i][3]<=1 && this.anim_array[i][3]>=0)
+					if (this.anim_array[i][3]<1)
 					{	
-						this.anim_array[i][1].scale.x=this.anim_array[i][2](this.anim_array[i][3]);
-						this.anim_array[i][1].scale.y=this.anim_array[i][2](this.anim_array[i][3]);
-						this.anim_array[i][3]+=this.anim_array[i][4];		
+						this.anim_array[i][1].scale.x=this.anim_array[i][4]+this.anim_array[i][6]*this.anim_array[i][2](this.anim_array[i][3]);
+						this.anim_array[i][1].scale.y=this.anim_array[i][5]+this.anim_array[i][7]*this.anim_array[i][2](this.anim_array[i][3]);
+						this.anim_array[i][3]+=this.anim_array[i][8];		
 					}
 					else
 					{
-						if (this.anim_array[i][5]==true)
+						if (this.anim_array[i][9]==true)
 							this.anim_array[i][1].visible=false;
 						this.anim_array[i]=[];						
 					}		
@@ -1765,8 +1767,8 @@ function process_6()
 	
 	
 	//показываем кнопку 
-	if (game_tick===100)
-		c.add_anim_scale(objects.retry_button,	a_in,0,0.02);	
+	if (game_tick===70)
+		c.add_anim_scale(objects.retry_button, a_in,0,1,1,1,0.02);	
 	
 	
 	//обрабатываем стрелки
