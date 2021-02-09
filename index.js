@@ -757,6 +757,9 @@ function process_1()
 	//это нажатие кнопки
 	function button_down()
 	{
+		//отключаем кнопку чтобы ее не нажимали много раз
+		objects.button_1.interactive=false;		
+		
 		g_process=process_2;
 		on_start=true;
 	}
@@ -873,6 +876,8 @@ function process_3()
 		passed_baloons=0;
 		bursted_baloons=0;
 
+		//включаем кнопку паузы
+		objects.pause_button.interactive=true;
 	
 		//активируем нажатие на лук
 		objects.bcg5.pointerdown=function(){send_arrow();};
@@ -1006,6 +1011,13 @@ function process_3()
 	//это нажатие паузы
 	function button_down()
 	{
+		
+		//отключаем кнопку чтобы много раз не нажимали
+		objects.pause_button.interactive=false;
+		
+		//включаем кнопку продолжения
+		objects.resume_button.interactive=true;
+		
 		g_process=process_7;
 		on_start=true;
 		
@@ -1093,6 +1105,10 @@ function process_5()
 	
 		//увеличиваем уровень
 		level++;
+		
+		//отключаем паузу и убираем ее
+		objects.pause_button.interactive=false;
+		c.add_anim_out_pos(objects.pause_button, a_out,objects.pause_button.x+200,		objects.pause_button.y	,0.04,true);	
 	
 		//другие инициализации
 		on_start=false;
@@ -1101,7 +1117,14 @@ function process_5()
 	
 	//показываем кнопку 
 	if (game_tick===70)
-		c.add_anim_scale(objects.next_level_button, a_in,0,1,1,1,0.02);	
+	{
+		//Включаем  кнопку
+		objects.next_level_button.interactive=true;
+		
+		c.add_anim_scale(objects.next_level_button, a_in,0,1,1,1,0.02);			
+	}
+	
+
 	
 	
 	//это нажатие кнопки
@@ -1112,6 +1135,9 @@ function process_5()
 		
 		//убираем кнопку с анимацией,звезды и другие объекты
 		c.add_anim_scale(objects.next_level_button, a_out,1,1,1,0,0.02,true);
+		
+		//отключаем кнопку
+		objects.next_level_button.interactive=false;
 		
 		//добавляем новые объекты
 		c.add_anim_out_pos(objects.win,				a_out,objects.win.x+500,	objects.win.y	,0.02,true);		
@@ -1152,6 +1178,9 @@ function process_6()
 		//добавляем новые объекты
 		c.add_anim_in_pos(objects.game_over,			a_in,-500,	0	,0.02,true);
 	
+		//отключаем паузу и убираем ее
+		objects.pause_button.interactive=false;	
+		c.add_anim_out_pos(objects.pause_button, a_out,objects.pause_button.x+200,		objects.pause_button.y	,0.04,true);		
 	
 		//другие инициализации
 		on_start=false;
@@ -1161,9 +1190,13 @@ function process_6()
 	}
 	
 	
-	//показываем кнопку 
+	//показываем кнопку retry  и включаем ее
 	if (game_tick===70)
-		c.add_anim_scale(objects.retry_button, a_in,0,1,1,1,0.02);	
+	{
+		c.add_anim_scale(objects.retry_button, a_in,0,1,1,1,0.02);			
+		objects.retry_button.interactive=true;
+	}
+
 	
 	
 	//обрабатываем стрелки
@@ -1179,9 +1212,9 @@ function process_6()
 		g_process=process_2;
 		on_start=true;
 		
-		//убираем кнопку с анимацией
+		//убираем кнопку с анимацией и отключаем ее
 		c.add_anim_scale(objects.retry_button, a_out,1,1,1,0,0.02,true);
-		
+		objects.retry_button.interactive=false;
 		
 		g_process=process_2;
 		on_start=true;
@@ -1234,6 +1267,11 @@ function process_7()
 		//добавляем объекты
 		c.add_anim_in_pos(objects.pause_button,		a_in,	dx=100,			dy=0,	0.04);	
 		
+		//снова включаем кнопку
+		objects.pause_button.interactive=true;
+		
+		//отключаем кнопку продолжения
+		objects.resume_button.interactive=false;
 		
 		g_process=process_3;
 		//on_start=true;
@@ -1243,7 +1281,6 @@ function process_7()
 	//анимация
 	c.process();
 }
-
 
 
 
