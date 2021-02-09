@@ -1043,7 +1043,9 @@ function process_4()
 		
 		g_spd=5;	
 	
-	
+		//отключаем паузу и убираем ее
+		objects.pause_button.interactive=false;	
+		
 		//другие инициализации
 		on_start=false;
 	}
