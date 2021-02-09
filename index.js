@@ -609,700 +609,6 @@ class arrow_class extends PIXI.Sprite
 	
 }
 
-class screen_0_class
-{
-	constructor(id)
-	{
-		this.id=id;
-	}
-	
-	draw_and_init()
-	{
-		
-		//скрываем все объекты
-		for (var i = 0; i < app.stage.children.length; i++)
-			app.stage.children[i].visible=false;	
-		
-		//загружаем в соответствии с апгредй листом
-		for (var i=0;i<load_list[this.id].length;i++)
-		{	
-			var obj_class=load_list[this.id][i][0];	
-			var obj_name=load_list[this.id][i][1];
-			
-			if (obj_class=="block" || obj_class=="sprite" || obj_class=="text" ) 
-			{
-				objects[obj_name].visible=true;		
-				eval(load_list[this.id][i][5]);
-			}		
-		}
-		
-		//функция процессинга
-		this.init_parameters=true;
-		g_process=this.process.bind(this);
-	}
-	
-	process()
-	{
-		
-		//инициируем все показатели
-		if (this.init_parameters==true)
-		{	
-			c.add_anim(objects.baloon5,a_bounce,250,-50,250,250,0.01);
-			c.add_anim(objects.bow5,a_elastic,objects.bow5.sx-200,objects.bow5.sy+50,objects.bow5.sx,objects.bow5.sy,0.01);
-			this.init_parameters=false;
-		}
-		
-		
-		objects.bow5.rotation=(Math.sin(game_tick))*0.8+0.8;
-		objects.baloon5.y=200+(Math.sin(game_tick*2))*50;
-		game_tick += 0.01666666;
-		
-		//обработка анимации
-		c.process();
-		
-	}	
-}
-
-class screen_1_class
-{
-	
-	constructor(id)
-	{
-		this.id=id;		
-	}
-	
-	send_baloon()
-	{		
-		
-		for (var i=0;i<objects.baloons.length;i++)
-		{
-			if (objects.baloons[i].visible==false)
-			{
-
-				objects.baloons[i].send(this.brick_prob);						
-				this.prv_baloon_send=game_tick;	
-				this.baloons_sent++;				
-
-				return;
-			}			
-		}
-	}
-	
-	slow_baloons()
-	{
-		
-		objects.baloons.forEach(e=>e.slow_down());
-		
-	}
-	
-	draw_and_init()
-	{
-		
-		//скрываем все объекты
-		for (var i = 0; i < app.stage.children.length; i++)
-			app.stage.children[i].visible=false;	
-		
-		//загружаем в соответствии с апгредй листом
-		for (var i=0;i<load_list[this.id].length;i++)
-		{	
-			var obj_class=load_list[this.id][i][0];	
-			var obj_name=load_list[this.id][i][1];
-			
-			if (obj_class=="block" || obj_class=="sprite" || obj_class=="text" ) 
-			{
-				
-				eval(load_list[this.id][i][5]);
-			}
-			
-			if (obj_class=="array" ) 
-			{				
-				var a_size=load_list[this.id][i][2];
-				for (var n=0;n<a_size;n++)
-					eval(load_list[this.id][i][5]);	
-			}
-			
-		}
-				
-				
-				
-		//секундная проверка событий
-		this.sec_check=1;				
-	
-		//карта событий
-		this.event_id=0;
-		this.events=[
-		[999999,"alert('long game'"]		
-		];
-		g_spd=5;
-		game_tick = 0;
-		game_ended=false;
-		bursted_baloons=0;
-		this.passed_baloons=0;
-		
-		this.baloons_sent=0;
-		
-		//время когда предыдущий шар был выпущен
-		this.prv_baloon_send=game_tick;
-		
-		//время когда предыдущий бонус был выпущен
-		this.prv_bonus_time=game_tick;
-		
-		//устанавливаем количество шаров в уровне
-		this.baloons_cnt=l_info[level][0];
-		
-		//устанавливаем начальное количество стрелки
-		this.arrows_cnt=l_info[level][1]+arrows_as_bonus;
-		objects.arrows_info_text.text="X"+this.arrows_cnt
-		
-		//вероятность кирпичного шара
-		this.brick_prob=l_info[level][3];
-		
-		//обозначаем уровень		
-		objects.level_note.text="Level "+level;
-		
-		//устанавливаем количество жизней
-		this.life=l_info[level][2];
-		objects.life_info.text="X"+this.life;
-		
-		//игра рукой
-		this.hand_play=false;
-		this.hand_play_start=0;
-		
-		//для бонусов
-		this.last_send_time=0;
-		this.last_hit=0;
-		this.hit_row_size=1;
-		
-		//функция процессинга
-		this.init_parameters=true;
-		g_process=this.process_init.bind(this);
-	}
-	
-	send_arrow()
-	{
-		if (this.arrows_cnt==0)
-			return;
-		
-		//запоминаем время выстрела
-		this.last_send_time=game_tick;
-		
-		//ищем свободную стрелу для запуска
-		for (var i=0;i<objects.arrows.length;i++)
-		{
-			if (objects.arrows[i].visible==false)
-			{				
-				objects.arrows[i].send(objects.bow.x,objects.bow.y,objects.bow.rotation);
-				break;
-			}
-		}
-		
-		//высключаем базовую стрелу и лук и нажатие отменяем
-		objects.arrow.visible=false;
-		objects.bow.texture=game_res.resources['bow2'].texture;
-		objects.bow.pointerdown=null;
-		
-		this.arrows_cnt--;
-
-		//обновляем инфор о количестве стрел
-		objects.arrows_info_text.text="X"+this.arrows_cnt
-		
-
-	}
-		
-	send_arrow_by_hand(e)
-	{
-		
-		
-		if (this.arrows_cnt==0)
-			return;
-		
-		//запоминаем время выстрела
-		this.last_send_time=game_tick;
-		
-		//определяем угол лука
-		var x=e.data.global.x/app.stage.scale.x;
-		var y=e.data.global.y/app.stage.scale.y;
-		
-		var dx=x-objects.bow.x;
-		var dy=y-objects.bow.y;
-		var dir = Math.atan2(dy, dx);
-		objects.bow.rotation=dir;
-		
-		//ищем свободную стрелу для запуска
-		for (var i=0;i<objects.arrows.length;i++)
-		{
-			if (objects.arrows[i].visible==false)
-			{				
-				objects.arrows[i].send(objects.bow.x,objects.bow.y,objects.bow.rotation);
-				break;
-			}
-		}
-		
-		//высключаем базовую стрелу и лук и нажатие отменяем
-		objects.arrow.visible=false;
-		objects.bow.texture=game_res.resources['bow2'].texture;
-		objects.bow.pointerdown=null;
-		
-		this.arrows_cnt--;
-
-		//обновляем инфор о количестве стрел
-		objects.arrows_info_text.text="X"+this.arrows_cnt
-		
-		
-	}
-		
-	decrease_life()
-	{
-		this.life--;
-		if (this.life<0)
-			this.life=0;
-		objects.life_info.text="X"+this.life;
-		this.passed_baloons++;
-	}
-	
-	process_init()
-	{
-		//инициируем все показатели
-		if (this.init_parameters==true)
-		{	
-	
-			//вылет уровня
-			c.add_anim(objects.level_note,a_out_back,450,objects.level_note.sy,objects.level_note.sx,objects.level_note.sy,0.01);
-	
-			//убираем все остальное
-			c.add_anim(objects.win,a_in_back,objects.win.sx,objects.win.sy,objects.win.sx-500,objects.win.sy,0.02,false);
-	
-			this.init_parameters=false;
-		}
-		
-		//крутим дартц если это не игра рукой
-		if (this.hand_play==false)
-		{
-			objects.bow.rotation+=0.05*g_spd;
-			objects.arrow.rotation+=0.05*g_spd;			
-		}
-
-		
-		//обрабатываем шары
-		objects.baloons.forEach(e=>e.process());
-		
-		//обрабатываем стрелки
-		objects.arrows.forEach(e=>e.process());
-		
-
-		//добавляем шары
-		if (this.baloons_sent<this.baloons_cnt)
-		{
-			if(game_tick>this.prv_baloon_send+0.7)
-			{
-				this.send_baloon();		
-			}			
-		}
-	
-		
-		game_tick += 0.01666666*g_spd;	
-		
-		
-		//завершаем начальный цикл
-		if (game_tick/g_spd>1)
-		{
-			g_process=this.process.bind(this);	
-			this.init_parameters=true;
-		}
-		
-		//обновляем анимации
-		c.process();
-	}
-	
-	add_arrows(cnt)
-	{
-		this.arrows_cnt+=cnt;
-		objects.arrows_info_text.text="X"+this.arrows_cnt
-	}
-			
-	process()
-	{
-		
-		//инициируем все показатели
-		if (this.init_parameters==true)
-		{	
-			g_spd=1;			
-			//включаем нажимание кнопки
-			objects.bcg.pointerdown=function(){screen_1.send_arrow()};
-			this.init_parameters=false;
-		}
-		
-		
-		//крутим дартц если это не игра рукой
-		if (this.hand_play==false)
-		{
-			objects.bow.rotation+=0.05*g_spd;
-			objects.arrow.rotation+=0.05*g_spd;			
-		}
-		else
-		{			
-			if (game_tick>this.hand_play_start+3)
-			{
-				objects.bcg.pointerdown=function(){screen_1.send_arrow()};
-				this.hand_play=false;	
-			}
-						
-		}
-		
-		//обрабатываем шары
-		objects.baloons.forEach(e=>e.process());
-		
-		//обрабатываем стрелки
-		objects.arrows.forEach(e=>e.process());
-			
-		//обрабатываем события
-		if (game_tick>this.events[this.event_id][0])
-		{
-			eval(this.events[this.event_id][1]);
-			this.event_id++;		
-		}			
-
-		//секундная проверка событий
-		if (game_tick>this.sec_check)
-		{
-			this.sec_left--;
-			
-			
-			if (this.life==0 && game_ended==false)
-			{
-				objects.game_over.visible=true;				
-				game_ended=true;
-			}
-			
-			if ((bursted_baloons+passed_baloons)==baloons_cnt && game_ended==false)
-			{			
-				game_ended=true;				
-				g_process=this.process_win.bind(this);
-				this.init_parameters=true;
-			}
-			
-			if (this.arrows_cnt==0 && game_ended==false)
-			{
-				g_process=this.process_finish.bind(this);
-				this.init_parameters=true;
-			}
-			
-			this.sec_check++;
-		}
-
-		//добавляем шары
-		if (this.baloons_sent<this.baloons_cnt)
-		{
-			if(game_tick/g_spd>this.prv_baloon_send+0.7)
-			{
-				this.send_baloon();		
-			}			
-		}
-
-		//возвращаем назад стрелу
-		if (objects.arrow.visible==false)
-		{
-			if (game_tick>this.last_send_time+0.2)
-			{
-				objects.arrow.visible=true;
-				objects.arrow.rotation=objects.bow.rotation;
-				objects.bow.texture=game_res.resources['bow'].texture;
-				objects.bow.pointerdown=function(){screen_1.send_arrow()};;
-			}		
-			
-		}
-		
-		//обрабатываем попадания
-		var hited=0;
-		for(var i=0;i<objects.baloons.length;i++)
-		{
-			if(objects.baloons[i].visible==true)
-			{
-				for (var k=0;k<objects.arrows.length;k++)
-				{
-					if(objects.arrows[k].visible==true)
-					{
-					
-						var dx=objects.baloons[i].x-objects.arrows[k].x;
-						var dy=objects.baloons[i].y-objects.arrows[k].y;
-						var d=dx*dx+dy*dy;
-						d=Math.sqrt(d);
-						if (d<30)
-						{
-							
-							switch(objects.baloons[i].type)
-							{
-								
-								case b_brick:
-									objects.baloons[i].turn_to_simple();
-									objects.arrows[k].visible=false;							
-								break;
-								
-								case b_simple:
-									objects.baloons[i].visible=false;	
-									bursted_baloons++;									
-								break;
-								
-								case b_bonus_arrows:
-									objects.baloons[i].visible=false;	
-									this.add_arrows(3);		
-									bursted_baloons++;							
-								break;
-								
-								case b_bonus_slow:
-									objects.baloons[i].visible=false;	
-									this.slow_baloons();
-									bursted_baloons++;								
-								break;
-								
-								case b_bonus_hand:
-									objects.baloons[i].visible=false;	
-									this.hand_play=true;
-									this.hand_play_start=game_tick;
-									objects.bcg.pointerdown=screen_1.send_arrow_by_hand.bind(this);
-									bursted_baloons++;								
-								break;
-								
-							}
-						}					
-					}
-				}
-			}
-		}
-			
-		
-		//обновляем анимации
-		c.process();
-		
-		game_tick += 0.01666666*g_spd;	
-	}	
-
-	process_win()
-	{
-		
-		//инициируем все показатели
-		if (this.init_parameters==true)
-		{	
-			level++;	
-			objects.win.visible=true;
-			
-						
-			//вылет обозначения
-			c.add_anim(objects.win,a_out_back,objects.win.sx+500,objects.win.sy,objects.win.sx,objects.win.sy,0.05);
-			
-			
-			if(this.passed_baloons==2)
-			{
-				objects.star1.visible=true;				
-				c.add_anim(objects.star1,a_bounce,objects.star1.sx,-50,objects.star1.sx,objects.star1.sy,0.01);
-				
-				objects.bonus.visible=true;				
-				objects.bonus.texture=game_res.resources['bonus_1'].texture;
-				c.add_anim(objects.bonus,a_elastic,-50,objects.bonus.sy,objects.bonus.sx,objects.bonus.sy,0.02);
-				
-				arrows_as_bonus=1;
-			}			
-			
-			if(this.passed_baloons==1)
-			{
-				objects.star1.visible=true;				
-				c.add_anim(objects.star1,a_bounce,objects.star1.sx,-50,objects.star1.sx,objects.star1.sy,0.01);
-				
-				objects.star2.visible=true;
-				c.add_anim(objects.star2,a_bounce,objects.star2.sx,-50,objects.star2.sx,objects.star2.sy,0.015);
-				
-				objects.bonus.visible=true;				
-				objects.bonus.texture=game_res.resources['bonus_5'].texture;
-				c.add_anim(objects.bonus,a_elastic,-50,objects.bonus.sy,objects.bonus.sx,objects.bonus.sy,0.02);
-				
-				arrows_as_bonus=5;
-			}			
-			
-			if(this.passed_baloons==0)
-			{
-				objects.star1.visible=true;				
-				c.add_anim(objects.star1,a_bounce,objects.star1.sx,-50,objects.star1.sx,objects.star1.sy,0.01);
-				
-				objects.star2.visible=true;
-				c.add_anim(objects.star2,a_bounce,objects.star2.sx,-50,objects.star2.sx,objects.star2.sy,0.015);
-				
-				objects.star3.visible=true;
-				c.add_anim(objects.star3,a_bounce,objects.star3.sx,-50,objects.star3.sx,objects.star3.sy,0.02);
-				
-				objects.bonus.visible=true;				
-				objects.bonus.texture=game_res.resources['bonus_10'].texture;
-				c.add_anim(objects.bonus,a_elastic,-50,objects.bonus.sy,objects.bonus.sx,objects.bonus.sy,0.02);
-				
-				arrows_as_bonus=10;
-			}				
-
-
-			this.init_parameters=false;
-		}
-		
-		
-		//обновляем анимации
-		c.process();
-		
-		//таймер
-		game_tick += 0.01666666*g_spd;			
-	}
-
-	process_finish()
-	{
-		
-		//инициируем все показатели
-		if (this.init_parameters==true)
-		{	
-			objects.bcg.pointerdown=null;
-			g_spd=5;
-			this.init_parameters=false;
-		}
-		
-		//крутим дартц
-		objects.bow.rotation-=0.05*g_spd;
-		objects.arrow.rotation-=0.05*g_spd;
-		
-		//обрабатываем шары
-		objects.baloons.forEach(e=>e.process());
-		
-		//обрабатываем стрелки
-		objects.arrows.forEach(e=>e.process());
-		
-		
-		if (this.life==0 && game_ended==false)
-		{
-			arrows_as_bonus=0;
-			
-			//вылет обозначения
-			c.add_anim(objects.game_over,a_out_back,objects.game_over.sx-500,objects.game_over.sy,objects.game_over.sx,objects.game_over.sy,0.01);
-			
-			objects.game_over.visible=true;				
-			game_ended=true;
-		}
-	
-		if ((bursted_baloons+this.passed_baloons)==this.baloons_cnt && game_ended==false)
-		{				
-			game_ended=true;				
-			g_process=this.process_win.bind(this);
-			this.init_parameters=true;
-		}
-		
-		game_tick += 0.01666666*g_spd;	
-					
-		//обновляем анимации
-		c.process();
-	}
-
-}
-
-class screen_2_class
-{
-	constructor(id)
-	{
-		this.id=id;
-	
-	}
-	
-	draw_and_init()
-	{
-		
-		//скрываем все объекты
-		for (var i = 0; i < app.stage.children.length; i++)
-			app.stage.children[i].visible=false;	
-		
-		//загружаем в соответствии с загрузочным листом
-		for (var i=0;i<load_list[this.id].length;i++)
-		{			
-			var obj_class=load_list[this.id][i][0];	
-			var obj_name=load_list[this.id][i][1];
-			
-			if (obj_class=="block" || obj_class=="sprite" || obj_class=="text" ) 
-			{
-				objects[obj_name].visible=true;		
-				eval(load_list[this.id][i][5]);
-				
-			}		
-			
-			if (obj_class=="array" ) 
-			{
-				
-				var a_size=load_list[this.id][i][2];
-				for (var n=0;n<a_size;n++)
-					eval(load_list[this.id][i][5]);		
-				
-			}
-		
-		}
-		
-			
-
-		g_process=this.process.bind(this);
-	}
-	
-	process()
-	{
-
-	}	
-
-}
-
-class screen_3_class
-{
-	constructor(id)
-	{
-		this.id=id;
-		
-	
-	}
-	
-	
-	draw_and_init()
-	{
-
-		//скрываем все объекты
-		for (var i = 0; i < app.stage.children.length; i++)
-			app.stage.children[i].visible=false;	
-		
-		//загружаем в соответствии с апгредй листом
-		for (var i=0;i<load_list[this.id].length;i++)
-		{	
-			var obj_class=load_list[this.id][i][0];	
-			var obj_name=load_list[this.id][i][1];
-			
-			if (obj_class=="block" || obj_class=="sprite" || obj_class=="text" ) 
-			{
-				objects[obj_name].visible=true;						
-				eval(load_list[this.id][i][5]);
-			}
-			
-			if (obj_class=="array" ) 
-			{
-				
-				var a_size=load_list[this.id][i][2];
-				for (var n=0;n<a_size;n++)
-					eval(load_list[this.id][i][5]);		
-				
-			}
-			
-		}
-		
-		
-		game_tick=0;
-	}
-	
-	
-	process()
-	{
-		
-		
-		
-		game_tick += 0.01666666;		
-	}	
-	
-	
-}
-
 function resize()
 {
     const vpw = window.innerWidth;  // Width of the viewport
@@ -1479,7 +785,7 @@ function process_2()
 		c.add_anim_out_pos(objects.game_over,	a_out,objects.game_over.x+400,	objects.game_over.y				,0.02,true);
 		
 		
-		objects.level_note.text="Level "+level;
+		objects.level_note.text="Level "+(level+1);
 		objects.arrows_info_text.text="x"+arrows;
 		objects.life_info.text="x"+life;
 	
@@ -1514,6 +820,7 @@ function process_2()
 		
 		c.add_anim_in_pos(objects.arrow,		a_in,	dx=-400,		dy=0,	0.02);	
 		c.add_anim_in_pos(objects.bow,			a_in,	dx=400,			dy=0,	0.02);	
+		c.add_anim_in_pos(objects.pause_button,		a_in,	dx=100,			dy=0,	0.02);	
 	}
 	
 	//крутим лук и стрелу
@@ -1694,6 +1001,18 @@ function process_3()
 		
 		sec_check=game_tick;
 	}
+
+
+	//это нажатие паузы
+	function button_down()
+	{
+		g_process=process_7;
+		on_start=true;
+		
+		return;
+	}
+	process_3.button_down=button_down;
+	
 
 	//тик
 	game_tick++;
@@ -1878,6 +1197,52 @@ function process_6()
 	
 }
 
+//это эпизод паузы
+function process_7()
+{	
+	//событие которое вызывается один раз для инициализации
+	if (on_start===true)
+	{		
+		
+		//убираем ненужные объекты
+		c.add_anim_out_pos(objects.pause_button, a_out,objects.pause_button.x+200,		objects.pause_button.y	,0.04,true);		
+
+	
+		//добавляем новые объекты
+		c.add_anim_in_pos(objects.pause_block,		a_in,-500,	0	,0.04,true);
+		c.add_anim_in_pos(objects.resume_button,	a_in,-500,	0	,0.04,true);
+	
+		//другие инициализации
+		on_start=false;
+		
+		//сбрасываем счетчик
+		game_tick=0;
+	}
+	
+	
+
+	
+		
+	//это нажатие кнопки
+	function button_down()
+	{
+		
+		//убираем  объекты
+		c.add_anim_out_pos(objects.pause_block, a_out,objects.pause_block.x+400,		objects.pause_block.y	,0.04,true);	
+		c.add_anim_out_pos(objects.resume_button, a_out,objects.resume_button.x+400,		objects.resume_button.y	,0.04,true);
+		
+		//добавляем объекты
+		c.add_anim_in_pos(objects.pause_button,		a_in,	dx=100,			dy=0,	0.04);	
+		
+		
+		g_process=process_3;
+		//on_start=true;
+	}
+	process_7.button_down=button_down;
+	
+	//анимация
+	c.process();
+}
 
 
 
