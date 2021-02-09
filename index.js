@@ -875,6 +875,9 @@ function process_3()
 		sec_check=0;
 		passed_baloons=0;
 		bursted_baloons=0;
+		
+		//устанавливаем текстуру лука
+		objects.bow.texture=game_res.resources['bow'].texture;
 
 		//включаем кнопку паузы
 		objects.pause_button.interactive=true;
