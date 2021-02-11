@@ -21,9 +21,7 @@ g_process=function(){};
 
 
 
-var path=[[-10,160],[80,160],[160,180],[193,208],[188,244],[150,270],[90,280],[50,330],[40,410],[40,540],[70,630],[140,680],[200,700],[275,700],[360,670],[390,610],[410,550],[420,460],[410,370],[390,310],[350,270],[295,265],[260,230],[270,200],[310,180],[370,160],[470,160]];
-
-
+var path=[[[-10,160],[42.3,146],[195.3,158.7],[193,208]],[[193,208],[190.7,257.3],[30.3,299.7],[30,470]],[[30,470],[29.7,640.3],[159,706.7],[224,705]],[[224,705],[289,703.3],[421.3,610.5],[420,460]],[[420,460],[418.7,309.5],[258.7,263],[258,210]],[[258,210],[257.3,157],[396.3,153.7],[470,160]]];
 var l_info=[[10,20,3,0],[12,21,3,0.02],[14,22,3,0.04],[16,23,3,0.06],[18,24,3,0.08],[20,25,3,0.1],[22,26,3,0.12],[24,27,3,0.14],[26,28,3,0.16],[28,29,3,0.18],[30,30,3,0.2],[32,31,3,0.22],[34,32,3,0.24],[36,33,3,0.26],[38,34,3,0.28],[40,35,3,0.3],[42,36,3,0.32],[44,37,3,0.34],[46,38,3,0.36],[48,39,3,0.38],[50,40,3,0.4],[52,41,3,0.42],[54,42,3,0.44],[56,43,3,0.46],[58,44,3,0.48]];
 
 
@@ -37,6 +35,7 @@ b_bonus_arrows=1;
 b_bonus_slow=2;
 b_brick=3;
 b_bonus_hand=4;
+b_bonus_hand2=5;
 
 
 
@@ -355,18 +354,21 @@ class baloon_class extends PIXI.Sprite
 	constructor()
 	{
 		super();
-		this.tar_node=0;
-		this.dx=0;
-		this.dy=0;
-		this.spd=1.5;
+		this.cur_segm=0;
+		this.t=0;
+		this.p0=0;
+		this.p1=0;
+		this.p2=0;
+		this.p3=0;
+		
+		this.prv_d=0;
+		this.spd=0;
 		this.type=b_simple;
 		this.is_slow_down=false;
 		this.slow_down_start=0;
 		
 		this.sec_check=0;
 		
-		this.tar_x=0;
-		this.tar_y=0;
 	}
 	
 	send(brick_prob)
@@ -385,13 +387,16 @@ class baloon_class extends PIXI.Sprite
 			
 		
 
-		this.x=path[0][0];
-		this.y=path[0][1];
+		this.cur_segm=-1;
+		this.t=0;
+		this.p0=0;
+		this.p1=0;
+		this.p2=0;
+		this.p3=0;
+		
 		this.visible=true;
-		this.tar_node=0;
-		this.dx=0;
-		this.dy=0;
-		this.spd=1.5;
+
+		this.spd=0.004;
 		this.is_slow_down=false;
 		this.slow_down_start=0;
 		
@@ -405,50 +410,10 @@ class baloon_class extends PIXI.Sprite
 		this.retarget();	
 	}
 	
-	/*
-	total_path()
-	{
-		
-        var dist_on_path = 0;
-        for (var p = 0; p < path.length - 1; p++)
-		{
-			var dx = path[p + 1][0] - path[p][0];
-			var dy = path[p + 1][1] - path[p][1];
-			var d = Math.sqrt(dx * dx + dy * dy);
-			dist_on_path += d;
-        }
-		return dist_on_path;
-		
-	}	
-		
-	dist_traveled()
-	{
-        var dist_on_path = 0;
-        for (var p = 0; p < path.length - 1; p++)
-		{
-            if (p == (this.tar_node - 1))
-			{
-                var dx = this.x - path[p][0];
-                var dy = this.y - path[p][1];
-                var d = Math.sqrt(dx * dx + dy * dy);
-                dist_on_path += d;
-                return dist_on_path;
-            }
-            else
-			{
-                var dx = path[p + 1][0] - path[p][0];
-                var dy = path[p + 1][1] - path[p][1];
-                var d = Math.sqrt(dx * dx + dy * dy);
-                dist_on_path += d;
-            }
-        }
-    }
-	*/
-	
 	slow_down()
 	{
 		
-		this.spd=0.5;
+		this.spd=0.001;
 		this.is_slow_down=true;
 		this.slow_down_start=game_tick;
 		
@@ -456,23 +421,21 @@ class baloon_class extends PIXI.Sprite
 	
 	retarget()
 	{
-		this.tar_node++;		
-		if (this.tar_node==path.length)
+		this.cur_segm++;		
+		if (this.cur_segm===path.length)
 		{
 			decrease_life();
 			this.visible=false;			
 			return;
 		}
 
-		this.tar_x=path[this.tar_node][0]+Math.random()*20-10;
-		this.tar_y=path[this.tar_node][1]+Math.random()*20-10;
-		
-		var dx=this.tar_x-this.x;
-		var dy=this.tar_y-this.y;
-		var d=dx*dx+dy*dy;
-		d=Math.sqrt(d);
-		this.dx=dx/d;
-		this.dy=dy/d;		
+		this.t=0;
+		this.p0=path[this.cur_segm][0];
+		this.p1=path[this.cur_segm][1];
+		this.p2=path[this.cur_segm][2];
+		this.p3=path[this.cur_segm][3];
+
+
 	}
 	
 	turn_to_simple()
@@ -480,6 +443,43 @@ class baloon_class extends PIXI.Sprite
 		
 		this.type=b_simple;
 		this.texture=game_res.resources['baloon'].texture;	
+	}
+	
+	
+	turn_to_bonus()
+	{	
+		
+		var r_int=Math.floor(Math.random() * 4);
+		
+		switch(r_int)
+		{
+			
+			case 0:
+			this.type=b_bonus_arrows;
+			this.texture=game_res.resources['baloon_bonus_arrows'].texture;	
+			break;
+			
+			
+			case 1:
+			this.type=b_bonus_slow;
+			this.texture=game_res.resources['baloon_bonus_slow'].texture;	
+			break;	
+			
+			
+			case 2:
+			this.type=b_bonus_hand;
+			this.texture=game_res.resources['baloon_bonus_hand'].texture;	
+			break;
+			
+			case 3:
+			this.type=b_bonus_hand2;
+			this.texture=game_res.resources['baloon_bonus_hand2'].texture;	
+			break;
+			
+		}
+
+
+		this.bonus_time=game_tick;
 		
 	}
 	
@@ -497,32 +497,7 @@ class baloon_class extends PIXI.Sprite
 				if (Math.random()>0.95)
 				{
 					
-					var r_int=Math.floor(Math.random() * 3);
-					
-					switch(r_int)
-					{
-						
-						case 0:
-						this.type=b_bonus_arrows;
-						this.texture=game_res.resources['baloon_bonus_arrows'].texture;	
-						break;
-						
-						
-						case 1:
-						this.type=b_bonus_slow;
-						this.texture=game_res.resources['baloon_bonus_slow'].texture;	
-						break;	
-						
-						
-						case 2:
-						this.type=b_bonus_hand;
-						this.texture=game_res.resources['baloon_bonus_hand'].texture;	
-						break;
-						
-					}
-
-
-					this.bonus_time=game_tick;
+					this.turn_to_bonus();
 				}			
 			}
 			this.sec_check=game_tick;
@@ -534,12 +509,12 @@ class baloon_class extends PIXI.Sprite
 			if (game_tick>this.slow_down_start+180)
 			{
 				this.is_slow_down=false;
-				this.spd=1.5;				
+				this.spd=0.004;				
 			}		
 		}
 		
 		//превращаем бонусные шары в обычные
-		if (this.type==b_bonus_arrows || this.type==b_bonus_slow || this.type==b_bonus_hand)
+		if (this.type==b_bonus_arrows || this.type==b_bonus_slow || this.type==b_bonus_hand || this.type==b_bonus_hand2)
 		{
 			if (game_tick>this.bonus_time+240)
 			{
@@ -548,14 +523,20 @@ class baloon_class extends PIXI.Sprite
 			}			
 		}
 		
-		this.x+=this.dx*this.spd*g_spd;
-		this.y+=this.dy*this.spd*g_spd;
+		var nx=Math.pow(1-this.t,3)*this.p0[0]+3*Math.pow(1-this.t,2)*this.t*this.p1[0]+3*(1-this.t)*this.t*this.t*this.p2[0]+Math.pow(this.t,3)*this.p3[0];
+		var ny=Math.pow(1-this.t,3)*this.p0[1]+3*Math.pow(1-this.t,2)*this.t*this.p1[1]+3*(1-this.t)*this.t*this.t*this.p2[1]+Math.pow(this.t,3)*this.p3[1];
 		
-		var dx=this.tar_x-this.x;
-		var dy=this.tar_y-this.y;
+		var dx=nx-this.x;
+		var dy=ny-this.y;
 		var d=dx*dx+dy*dy;
 		d=Math.sqrt(d);
-		if (d<(this.spd*g_spd+0.1))
+		
+		
+		this.x=nx;
+		this.y=ny;
+		
+		this.t+=this.spd*g_spd;
+		if (this.t>=1)
 			this.retarget();
 	}
 	
@@ -716,6 +697,29 @@ function send_many_arrows(px,py)
 	}		
 
 }
+	
+function send_many_arrows2(px,py)
+{
+	
+	var cnt=5;
+	var inc_a=PI_2/cnt;
+	var inc_i=0;
+	
+	
+	//ищем свободную стрелу для запуска
+	for (var i=0;i<objects.arrows.length;i++)
+	{
+		if (objects.arrows[i].visible==false)
+		{				
+			objects.arrows[i].send(px,py,inc_a*inc_i-0.314159);
+			inc_i++;
+			
+			if (inc_i===cnt)
+				return;
+		}
+	}		
+
+}
 		
 function decrease_life()
 {
@@ -725,7 +729,18 @@ function decrease_life()
 	objects.life_info.text="x"+this.life;
 	passed_baloons++;
 }
-			
+		
+//подсчитываем активные стрелы
+function count_active_arrows()
+{	
+	var cnt=0;
+	for (var k=0;k<objects.arrows.length;k++)
+		if (objects.arrows[k].visible===true)
+			cnt++;
+
+	return cnt;	
+}
+		
 //заставка игры
 function process_1()
 {
@@ -946,7 +961,7 @@ function process_3()
 						{
 							
 							case b_brick:
-								objects.baloons[i].turn_to_simple();
+								objects.baloons[i].turn_to_bonus();
 								objects.arrows[k].visible=false;							
 							break;
 							
@@ -971,6 +986,13 @@ function process_3()
 								objects.baloons[i].visible=false;	
 								objects.arrows[k].visible=false;	
 								send_many_arrows(objects.baloons[i].x,objects.baloons[i].y);
+								bursted_baloons++;								
+							break;
+							
+							case b_bonus_hand2:
+								objects.baloons[i].visible=false;	
+								objects.arrows[k].visible=false;	
+								send_many_arrows2(objects.baloons[i].x,objects.baloons[i].y);
 								bursted_baloons++;								
 							break;
 							
@@ -1000,7 +1022,9 @@ function process_3()
 			return;
 		}
 		
-		if (arrows_cnt==0 && game_ended==false)
+		
+		var a_cnt=count_active_arrows();		
+		if (arrows_cnt===0 && a_cnt===0 && game_ended==false)
 		{
 			g_process=process_4;
 			on_start=true;
