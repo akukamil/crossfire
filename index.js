@@ -10,19 +10,24 @@ var prv_baloon_send=0;
 var baloons_sent=0;
 var baloons_cnt=10;
 var arrows_cnt=20;
+var arrows_bonus=0;
 var arrow_send_time=0;
 var bursted_baloons=0;
 var passed_baloons=0;
 var sec_check=0;
 var game_ended=false;
 var hand_play=false
+var brick_chance=0;
 
 g_process=function(){};
 
 
 
 var path=[[[-10,160],[42.3,146],[195.3,158.7],[193,208]],[[193,208],[190.7,257.3],[30.3,299.7],[30,470]],[[30,470],[29.7,640.3],[159,706.7],[224,705]],[[224,705],[289,703.3],[421.3,610.5],[420,460]],[[420,460],[418.7,309.5],[258.7,263],[258,210]],[[258,210],[257.3,157],[396.3,153.7],[470,160]]];
-var l_info=[[10,20,3,0],[12,21,3,0.02],[14,22,3,0.04],[16,23,3,0.06],[18,24,3,0.08],[20,25,3,0.1],[22,26,3,0.12],[24,27,3,0.14],[26,28,3,0.16],[28,29,3,0.18],[30,30,3,0.2],[32,31,3,0.22],[34,32,3,0.24],[36,33,3,0.26],[38,34,3,0.28],[40,35,3,0.3],[42,36,3,0.32],[44,37,3,0.34],[46,38,3,0.36],[48,39,3,0.38],[50,40,3,0.4],[52,41,3,0.42],[54,42,3,0.44],[56,43,3,0.46],[58,44,3,0.48]];
+
+var l_info=[[10,20,3,0],[12,20,3,0.02],[14,20,3,0.04],[16,20,3,0.06],[18,20,3,0.08],[20,20,3,0.1],[22,20,3,0.12],[24,20,3,0.14],[26,20,3,0.16],[28,20,3,0.18],[30,20,3,0.2],[32,20,3,0.22],[34,20,3,0.24],[36,20,3,0.26],[38,20,3,0.28],[40,20,3,0.3],[42,20,3,0.32],[44,20,3,0.34],[46,20,3,0.36],[48,20,3,0.38],[50,20,3,0.4],[52,20,3,0.42],[54,20,3,0.44],[56,20,3,0.46],[58,20,3,0.48]];
+
+
 
 
 
@@ -444,8 +449,7 @@ class baloon_class extends PIXI.Sprite
 		this.type=b_simple;
 		this.texture=game_res.resources['baloon'].texture;	
 	}
-	
-	
+		
 	turn_to_bonus()
 	{	
 		
@@ -485,18 +489,17 @@ class baloon_class extends PIXI.Sprite
 	
 	process()
 	{				
-		if (this.visible==false)
+		if (this.visible===false)
 			return;
 		
 		
 		//секундная проверка и превращение в бонусы
 		if (game_tick>this.sec_check+60)
 		{			
-			if (this.type==b_simple)
+			if (this.type===b_simple)
 			{
 				if (Math.random()>0.95)
-				{
-					
+				{					
 					this.turn_to_bonus();
 				}			
 			}
@@ -626,10 +629,10 @@ function send_baloon()
 	
 	for (var i=0;i<objects.baloons.length;i++)
 	{
-		if (objects.baloons[i].visible==false)
+		if (objects.baloons[i].visible===false)
 		{
 
-			objects.baloons[i].send(0.1);						
+			objects.baloons[i].send(brick_chance);						
 			prv_baloon_send=game_tick;	
 			baloons_sent++;				
 
@@ -815,9 +818,13 @@ function process_2()
 		baloons_cnt=l_info[level][0];		
 		life=l_info[level][2];
 		
+		//устанавливаем вероятность кирпичного шара
+		brick_chance=l_info[level][3];
+		
 		//восстанавливаем количество стрел
-		arrows_cnt=l_info[level][1];
+		arrows_cnt=l_info[level][1]+arrows_bonus;
 		objects.arrows_info_text.text="x"+arrows_cnt;
+		life=10;
 	
 		//другие инициализации		
 		g_spd=5;
@@ -885,7 +892,7 @@ function process_3()
 		
 		g_spd=1;
 		game_ended=false;
-		life=3;
+		
 		objects.life_info.text="x"+life;
 		sec_check=0;
 		passed_baloons=0;
@@ -1068,7 +1075,11 @@ function process_4()
 	if (on_start===true)
 	{
 		
-		g_spd=5;	
+		g_spd=5;
+
+
+		//отключаем замедление
+		objects.baloons.forEach(e=>e.spd=0.004);
 	
 		//отключаем паузу и убираем ее
 		objects.pause_button.interactive=false;	
@@ -1118,9 +1129,7 @@ function process_5()
 	//событие которое вызывается один раз для инициализации
 	if (on_start===true)
 	{
-		
-		
-		
+			
 		//убираем ненужные объекты
 		c.add_anim_out_pos(objects.arrow,		a_out,objects.arrow.x+300,		objects.arrow.y					,0.02,true);		
 		c.add_anim_out_pos(objects.bow,			a_out,objects.bow.x-300,		objects.bow.y					,0.02,true);	
@@ -1128,9 +1137,16 @@ function process_5()
 		//добавляем новые объекты
 		c.add_anim_in_pos(objects.win,			a_in,-500,	0	,0.02,true);
 		
-		c.add_anim_in_pos(objects.star1,			a_in_bounce,0,	-500	,0.01,true);
-		c.add_anim_in_pos(objects.star2,			a_in_bounce,0,	-500	,0.015,true);
-		c.add_anim_in_pos(objects.star3,			a_in_bounce,0,	-500	,0.02,true);
+		
+		//добавляем количество звезд в зависимости от результата
+		if (life>0)
+			c.add_anim_in_pos(objects.star1,			a_in_bounce,0,	-500	,0.02,true);
+	
+		if (life>3)
+			c.add_anim_in_pos(objects.star2,			a_in_bounce,0,	-500	,0.015,true);
+		
+		if (life>6)
+			c.add_anim_in_pos(objects.star3,			a_in_bounce,0,	-500	,0.01,true);
 	
 		//увеличиваем уровень
 		level++;
@@ -1144,8 +1160,35 @@ function process_5()
 		game_tick=0;
 	}
 	
+	
+	
+	//показываем бонусы 
+	if (game_tick===100)
+	{
+		
+		
+		
+		//добавляем количество звезд в зависимости от результата
+		if (life>0 && life<4)
+			arrows_bonus=1;
+	
+		if (life>3 && life<7)
+			arrows_bonus=5;
+		
+		if (life>6)
+			arrows_bonus=10;
+		
+		
+		objects.bonus.texture=game_res.resources["bonus_"+arrows_bonus].texture;		
+		c.add_anim_in_pos(objects.bonus,	a_in_bounce,0,	-500	,0.02,true);	
+		
+		
+	
+	}
+	
+	
 	//показываем кнопку 
-	if (game_tick===70)
+	if (game_tick===100)
 	{
 		//Включаем  кнопку
 		objects.next_level_button.interactive=true;
@@ -1164,16 +1207,25 @@ function process_5()
 		
 		//убираем кнопку с анимацией,звезды и другие объекты
 		c.add_anim_scale(objects.next_level_button, a_out,1,1,1,0,0.02,true);
+		c.add_anim_out_pos(objects.win,				a_out,objects.win.x+500,	objects.win.y	,0.02,true);	
+		
+		
+		//убираем звезды если они есть
+		if (objects.star1.visible===true)
+			c.add_anim_out_pos(objects.star1,	a_out,objects.star1.x,	objects.star1.y+600	,0.01,true);
+	
+		if (objects.star2.visible===true)
+			c.add_anim_out_pos(objects.star2,	a_out,objects.star2.x,	objects.star2.y+600	,0.015,true);
+	
+		if (objects.star3.visible===true)
+			c.add_anim_out_pos(objects.star3,	a_out,objects.star3.x,	objects.star3.y+600	,0.02,true);		
+		
+		if (objects.bonus.visible===true)
+			c.add_anim_out_pos(objects.bonus,	a_out,objects.bonus.x-500,	objects.bonus.y	,0.02,true);	
+		
 		
 		//отключаем кнопку
 		objects.next_level_button.interactive=false;
-		
-		//добавляем новые объекты
-		c.add_anim_out_pos(objects.win,				a_out,objects.win.x+500,	objects.win.y	,0.02,true);		
-		c.add_anim_out_pos(objects.star1,			a_out,objects.star1.x,	objects.star1.y+600	,0.01,true);
-		c.add_anim_out_pos(objects.star2,			a_out,objects.star2.x,	objects.star2.y+600	,0.015,true);
-		c.add_anim_out_pos(objects.star3,			a_out,objects.star3.x,	objects.star3.y+600	,0.02,true);
-		
 		
 		
 		g_process=process_2;
@@ -1213,6 +1265,9 @@ function process_6()
 	
 		//другие инициализации
 		on_start=false;
+		
+		//нет бонуса стрел
+		arrows_bonus=0;
 		
 		//сбрасываем счетчик
 		game_tick=0;
