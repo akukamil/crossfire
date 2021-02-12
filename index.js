@@ -6,14 +6,14 @@ var screen_0, screen_1, screen_2, screen_3;
 var level=0;
 var arrows=20;
 var life=0;
-var prv_baloon_send=0;
+var last_baloon_send_time=0;
 var baloons_sent=0;
 var baloons_cnt=10;
 var arrows_cnt=20;
 var arrows_bonus=0;
 var arrow_send_time=0;
 var bursted_baloons=0;
-var passed_baloons=0;
+var baloons_finished=0;
 var sec_check=0;
 var game_ended=false;
 var hand_play=false
@@ -390,8 +390,6 @@ class baloon_class extends PIXI.Sprite
 			this.texture=game_res.resources['baloon'].texture;		
 		}
 			
-		
-
 		this.cur_segm=-1;
 		this.t=0;
 		this.p0=0;
@@ -399,8 +397,6 @@ class baloon_class extends PIXI.Sprite
 		this.p2=0;
 		this.p3=0;
 		
-		this.visible=true;
-
 		this.spd=0.004;
 		this.is_slow_down=false;
 		this.slow_down_start=0;
@@ -410,7 +406,6 @@ class baloon_class extends PIXI.Sprite
 		this.bonus_time=0;
 		this.visible=true;
 		
-		//this.total_path_len=this.total_path();
 
 		this.retarget();	
 	}
@@ -633,7 +628,7 @@ function send_baloon()
 		{
 
 			objects.baloons[i].send(brick_chance);						
-			prv_baloon_send=game_tick;	
+			last_baloon_send_time=game_tick;	
 			baloons_sent++;				
 
 			return;
@@ -730,7 +725,7 @@ function decrease_life()
 	if (life<0)
 		life=0;
 	objects.life_info.text="x"+this.life;
-	passed_baloons++;
+	baloons_finished++;
 }
 		
 //подсчитываем активные стрелы
@@ -808,15 +803,15 @@ function process_2()
 		
 		objects.level_note.text="Level "+(level+1);
 		objects.arrows_info_text.text="x"+arrows;
-		objects.life_info.text="x"+life;
+
 	
 		//сначала выключаем все шары которые возможно остались от предыдущих игр
 		objects.baloons.forEach(e=>e.visible=false);	
 		baloons_sent=0;
 		bursted_baloons=0;
-		prv_baloon_send=0;
+		last_baloon_send_time=0;
 		baloons_cnt=l_info[level][0];		
-		life=l_info[level][2];
+
 		
 		//устанавливаем вероятность кирпичного шара
 		brick_chance=l_info[level][3];
@@ -824,8 +819,11 @@ function process_2()
 		//восстанавливаем количество стрел
 		arrows_cnt=l_info[level][1]+arrows_bonus;
 		objects.arrows_info_text.text="x"+arrows_cnt;
+		
+		//устанавливаем количество жизней
 		life=10;
-	
+		objects.life_info.text="x"+life;	
+		
 		//другие инициализации		
 		g_spd=5;
 		game_tick=0;
@@ -856,7 +854,7 @@ function process_2()
 	//добавляем шары
 	if (baloons_sent<baloons_cnt)
 	{
-		if(game_tick>prv_baloon_send+60/g_spd)
+		if(game_tick>last_baloon_send_time+60/g_spd)
 		{
 			send_baloon();		
 		}			
@@ -895,7 +893,7 @@ function process_3()
 		
 		objects.life_info.text="x"+life;
 		sec_check=0;
-		passed_baloons=0;
+		baloons_finished=0;
 		bursted_baloons=0;
 		
 		//устанавливаем текстуру лука
@@ -919,12 +917,9 @@ function process_3()
 
 	//добавляем шары
 	if (baloons_sent<baloons_cnt)
-	{
-		if(game_tick>prv_baloon_send+60/g_spd)
-		{
-			send_baloon();		
-		}			
-	}
+		if(game_tick>last_baloon_send_time+60/g_spd)
+			send_baloon();	
+
 
 	//обрабатываем шары
 	objects.baloons.forEach(e=>e.process());
@@ -1021,7 +1016,7 @@ function process_3()
 			return;
 		}
 		
-		if ((bursted_baloons+passed_baloons)==baloons_cnt && game_ended==false)
+		if ((bursted_baloons+baloons_finished)==baloons_cnt && game_ended==false)
 		{			
 			game_ended=true;				
 			g_process=process_5;
@@ -1098,6 +1093,15 @@ function process_4()
 	//обрабатываем стрелки
 	objects.arrows.forEach(e=>e.process());	
 	
+	//добавляем шары
+	if (baloons_sent<baloons_cnt)
+	{
+		if(game_tick>last_baloon_send_time+60/g_spd)
+		{
+			send_baloon();		
+		}			
+	}
+	
 	
 	//обрабатываем событие выигрыша или проигрыша
 	if (life==0 && game_ended==false)
@@ -1108,13 +1112,15 @@ function process_4()
 		return;
 	}
 	
-	if ((bursted_baloons+passed_baloons)==baloons_cnt && game_ended==false)
+	if ((bursted_baloons+baloons_finished)==baloons_cnt && game_ended==false)
 	{			
 		game_ended=true;				
 		g_process=process_5;
 		on_start=true;
 		return;
 	}
+		
+
 		
 	//тик
 	game_tick++;
@@ -1327,7 +1333,7 @@ function process_7()
 	
 		//добавляем новые объекты
 		c.add_anim_in_pos(objects.pause_block,		a_in,-500,	0	,0.04,true);
-		c.add_anim_in_pos(objects.resume_button,	a_in,-500,	0	,0.04,true);
+		c.add_anim_in_pos(objects.resume_button,	a_in,+500,	0	,0.04,true);
 	
 		//другие инициализации
 		on_start=false;
@@ -1346,7 +1352,7 @@ function process_7()
 		
 		//убираем  объекты
 		c.add_anim_out_pos(objects.pause_block, a_out,objects.pause_block.x+400,		objects.pause_block.y	,0.04,true);	
-		c.add_anim_out_pos(objects.resume_button, a_out,objects.resume_button.x+400,		objects.resume_button.y	,0.04,true);
+		c.add_anim_out_pos(objects.resume_button, a_out,objects.resume_button.x-400,		objects.resume_button.y	,0.04,true);
 		
 		//добавляем объекты
 		c.add_anim_in_pos(objects.pause_button,		a_in,	dx=100,			dy=0,	0.04);	
@@ -1365,8 +1371,6 @@ function process_7()
 	//анимация
 	c.process();
 }
-
-
 
 function load()
 {
