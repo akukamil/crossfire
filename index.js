@@ -1168,8 +1168,7 @@ function process_5()
 
 		
 		
-		//увеличиваем уровень
-		level++;
+
 		
 		//отключаем паузу и убираем ее
 		objects.pause_button.interactive=false;
@@ -1212,21 +1211,28 @@ function process_5()
 	{
 		//Включаем  кнопку
 		objects.next_level_button.interactive=true;
+		objects.replay_level_button.interactive=true;
 		
 		c.add_anim_scale(objects.next_level_button, a_in,0,1,1,1,0.02);			
+		c.add_anim_scale(objects.replay_level_button, a_in,0,1,1,1,0.02);		
 	}
 	
 
 	
 	
-	//это нажатие кнопки
-	function button_down()
+	//это нажатие кнопки следующего уровня
+	function button_down(lev_inc)
 	{
+		
+		//увеличиваем уровень
+		level+=lev_inc;
+		
 		g_process=process_2;
 		on_start=true;
 		
 		//убираем кнопку с анимацией,звезды и другие объекты
 		c.add_anim_scale(objects.next_level_button, a_out,1,1,1,0,0.02,true);
+		c.add_anim_scale(objects.replay_level_button, a_out,1,1,1,0,0.02,true);
 		c.add_anim_out_pos(objects.win,				a_out,objects.win.x+500,	objects.win.y	,0.02,true);	
 		
 		
@@ -1244,9 +1250,9 @@ function process_5()
 			c.add_anim_out_pos(objects.bonus,	a_out,objects.bonus.x-500,	objects.bonus.y	,0.02,true);	
 		
 		
-		//отключаем кнопку
+		//отключаем кнопки
 		objects.next_level_button.interactive=false;
-		
+		objects.replay_level_button.interactive=false;
 		
 		g_process=process_2;
 		on_start=true;
