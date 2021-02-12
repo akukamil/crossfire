@@ -31,8 +31,6 @@ var l_info=[[10,20,3,0,100],[12,20,3,0.02,105],[14,20,3,0.04,110],[16,20,3,0.06,
 
 
 
-
-
 //это бонусы стрел после уровня
 arrows_as_bonus=0;
 
@@ -54,6 +52,7 @@ const a_in=0;
 const a_out=1;
 const a_in_bounce=2;
 const a_in_elastic=3;
+const a_in_out_quart=4;
 
 const a_pos=0;
 const a_scale=1;
@@ -110,15 +109,21 @@ class anim_class
 		
 	f_in_elastic(x)
 	{
-	const c4 = (2 * Math.PI) / 3;
+		const c4 = (2 * Math.PI) / 3;
 
-	return x === 0
-	? 0
-	: x === 1
-	? 1
-	: Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
+		return x === 0
+		? 0
+		: x === 1
+		? 1
+		: Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
 	}
 	
+	f_in_out_quart(x)
+	{
+		return x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2;
+	}
+	
+		
 	add_anim_scale(spr,anim,scl_x0, scl_x1, scl_y0, scl_y1,spd,hide_on_end=false)
 	{
 		//ищем свободный слот для анимации
@@ -184,7 +189,11 @@ class anim_class
 					
 					case a_in_elastic:
 					func=this.f_in_elastic;
-					break;						
+					break;		
+
+					case a_in_out_quart:
+					func=this.f_in_out_quart;
+					break;	
 				}				
 				
 				//включаем видимость
@@ -222,7 +231,11 @@ class anim_class
 					
 					case a_in_elastic:
 					func=this.f_in_elastic;
-					break;						
+					break;	
+
+					case a_in_out_quart:
+					func=this.f_in_out_quart;
+					break;	
 				}				
 				
 				
@@ -917,8 +930,25 @@ function process_3()
 	
 		//другие инициализации
 		on_start=false;
+		
+		
+		//подсказка игры
+		if (level===0)
+		{
+			c.add_anim_in_pos(objects.hand_click,	a_in_out_quart,+500,	+200	,0.02,true);
+			objects.hand_click.play();			
+		}
+
 	}
 
+
+
+	//убираем подсказку игры
+	if (level===0)
+		if (game_tick===fast_init_time+100)
+			c.add_anim_out_pos(objects.hand_click,		a_in_out_quart,objects.hand_click.x+300,		objects.hand_click.y+100	,0.02,true);	
+	
+	
 	
 	//крутим лук и стрелу
 	objects.bow.rotation+=0.05*g_spd;
@@ -1361,9 +1391,7 @@ function process_7()
 		//game_tick=0;
 	}
 	
-	
-
-	
+		
 		
 	//это нажатие кнопки
 	function button_down()
