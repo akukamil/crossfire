@@ -1141,6 +1141,7 @@ function process_4()
 	if (on_start===true)
 	{
 		
+		game_res.resources.speedup.sound.play();
 		g_spd=5;
 
 
@@ -1546,6 +1547,7 @@ function load()
 	game_res.add('lose','sounds/lose.mp3');
 	game_res.add('brick','sounds/brick.mp3');
 	game_res.add('music','sounds/music.mp3');
+	game_res.add('speedup','sounds/speedup.mp3');
 
 	game_res.load(load_complete);		
 	game_res.onProgress.add(progress);
