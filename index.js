@@ -3,6 +3,8 @@ var app, game_res, game_tick=0, g_spd=5, objects={}, baloons=[], a_cnt=20
 var screen_0, screen_1, screen_2, screen_3;
 
 
+
+var is_normal_game=false;
 var level=0;
 var arrows=20;
 var life=0;
@@ -26,8 +28,7 @@ g_process=function(){};
 
 var path=[[[-34,171],[38.3,138],[182.3,162.3],[193,213]],[[193,213],[203.7,263.6],[30.3,304.6],[30,475]],[[30,475],[29.7,645.3],[159,711.6],[224,710]],[[224,710],[289,708.3],[421.3,615.5],[420,465]],[[420,465],[418.7,314.5],[258.7,268],[258,215]],[[258,215],[257.3,162],[396.3,158.6],[470,165]]];
 
-var l_info=[[10,20,3,0,100],[12,20,3,0.02,105],[14,20,3,0.04,110],[16,20,3,0.06,115],[18,20,3,0.08,120],[20,20,3,0.1,125],[22,20,3,0.12,130],[24,20,3,0.14,135],[26,20,3,0.16,140],[28,20,3,0.18,145],[30,20,3,0.2,150],[32,20,3,0.22,155],[34,20,3,0.24,160],[36,20,3,0.26,165],[38,20,3,0.28,170],[40,20,3,0.3,175],[42,20,3,0.32,180],[44,20,3,0.34,185],[46,20,3,0.36,190],[48,20,3,0.38,195],[50,20,3,0.4,200],[52,20,3,0.42,205],[54,20,3,0.44,210],[56,20,3,0.46,215],[58,20,3,0.48,220]];
-
+var l_info=[[10,20,3,0,100],[12,20,3,0.02,105],[14,20,3,0.04,110],[16,20,3,0.06,115],[18,20,3,0.08,120],[20,20,3,0.1,125],[22,20,3,0.12,130],[24,20,3,0.14,135],[26,20,3,0.16,140],[28,20,3,0.18,145],[30,20,3,0.2,150],[32,20,3,0.22,155],[34,20,3,0.24,160],[36,20,3,0.26,165],[38,20,3,0.28,170],[40,20,3,0.3,175],[42,20,3,0.32,180],[44,20,3,0.34,185],[46,20,3,0.36,190],[48,20,3,0.38,195],[50,20,3,0.4,200],[52,20,3,0.42,205],[54,20,3,0.44,210],[56,20,3,0.46,215],[58,20,3,0.48,220][60,20,3,0.5,225],[62,20,3,0.52,230],[64,20,3,0.54,235]];
 
 
 
@@ -653,6 +654,8 @@ function send_baloon()
 
 function add_arrows(cnt)
 {
+	
+	
 	arrows_cnt+=cnt;
 	objects.arrows_info_text.text="X"+arrows_cnt
 }
@@ -670,6 +673,10 @@ function send_arrow()
 	{
 		if (objects.arrows[i].visible==false)
 		{				
+	
+			//играем звуки
+			game_res.resources.arrow_send.sound.play();
+		
 			objects.arrows[i].send(objects.bow.x,objects.bow.y,objects.bow.rotation);
 			break;
 		}
@@ -739,6 +746,12 @@ function decrease_life()
 	life--;
 	if (life<0)
 		life=0;
+	
+	//играем звук
+	if (g_spd===1)
+		game_res.resources.warning.sound.play();
+	
+	
 	objects.life_info.text="x"+this.life;
 	baloons_finished++;
 }
@@ -761,6 +774,9 @@ function process_1()
 	//событие которое вызывается один раз для инициализации
 	if (on_start===true)
 	{
+		
+		game_res.resources.music.sound.play();
+		
 		//рисуем объекты с выходом соответсвующей анимацией
 		objects.bcg5.visible=true;
 		c.add_anim_in_pos(objects.game_name,	a_in,	dx=-0,		dy=-150,0.01);		
@@ -779,12 +795,19 @@ function process_1()
 		
 	//после того как все завершилось активируем кнопку
 	if (game_tick===100)
-		objects.button_1.interactive=true;		
+		objects.button_1.interactive=true;	
+
+
 
 
 	//это нажатие кнопки
 	function button_down()
 	{
+		game_res.resources.music.sound.volume=0.5;
+		
+		//звук
+		game_res.resources.click.sound.play();
+		
 		//отключаем кнопку чтобы ее не нажимали много раз
 		objects.button_1.interactive=false;		
 		
@@ -793,7 +816,7 @@ function process_1()
 	}
 	process_1.button_down=button_down;
 	
-	
+	objects.game_name.rotation=Math.sin(game_tick/10)/10;
 	objects.baloon5.rotation=Math.sin(game_tick/100);
 	objects.bow5.rotation=Math.sin(game_tick/140);
 	
@@ -911,6 +934,9 @@ function process_3()
 	if (on_start===true)
 	{
 		
+		game_res.resources.music.sound.volume=0.25;
+		
+		
 		g_spd=1;
 		game_ended=false;
 		
@@ -1004,23 +1030,27 @@ function process_3()
 							
 							case b_brick:
 								objects.baloons[i].turn_to_bonus();
-								objects.arrows[k].visible=false;							
+								objects.arrows[k].visible=false;	
+								game_res.resources.brick.sound.play();								
 							break;
 							
 							case b_simple:
 								objects.baloons[i].visible=false;	
+								game_res.resources.baloon_burst.sound.play();
 								bursted_baloons++;									
 							break;
 							
 							case b_bonus_arrows:
 								objects.baloons[i].visible=false;	
 								add_arrows(3);		
+								game_res.resources.arrows_bonus.sound.play();
 								bursted_baloons++;							
 							break;
 							
 							case b_bonus_slow:
 								objects.baloons[i].visible=false;	
 								objects.baloons.forEach(e=>e.slow_down());
+								game_res.resources.freeze_bonus.sound.play();
 								bursted_baloons++;								
 							break;
 							
@@ -1028,6 +1058,7 @@ function process_3()
 								objects.baloons[i].visible=false;	
 								objects.arrows[k].visible=false;	
 								send_many_arrows(objects.baloons[i].x,objects.baloons[i].y);
+								game_res.resources.multi.sound.play();
 								bursted_baloons++;								
 							break;
 							
@@ -1035,6 +1066,7 @@ function process_3()
 								objects.baloons[i].visible=false;	
 								objects.arrows[k].visible=false;	
 								send_many_arrows2(objects.baloons[i].x,objects.baloons[i].y);
+								game_res.resources.multi.sound.play();
 								bursted_baloons++;								
 							break;
 							
@@ -1063,7 +1095,6 @@ function process_3()
 			on_start=true;
 			return;
 		}
-		
 		
 		var a_cnt=count_active_arrows();		
 		if (arrows_cnt===0 && a_cnt===0 && game_ended==false)
@@ -1172,9 +1203,21 @@ function process_4()
 //это эпизод выигрыша
 function process_5()
 {	
+
+
+	//если это последний уровень то переходим к заключитьельному эпизоду
+	if (level===25)
+	{
+		g_process=process_8;
+		on_start=true;
+		return;
+	}
+
 	//событие которое вызывается один раз для инициализации
 	if (on_start===true)
 	{
+		//играем звуки
+		game_res.resources.win_level.sound.play();
 			
 		//убираем ненужные объекты
 		c.add_anim_out_pos(objects.arrow,		a_out,objects.arrow.x+300,		objects.arrow.y					,0.02,true);		
@@ -1253,6 +1296,9 @@ function process_5()
 	function button_down(lev_inc)
 	{
 		
+		//звук
+		game_res.resources.click.sound.play();
+		
 		//увеличиваем уровень
 		level+=lev_inc;
 		
@@ -1306,6 +1352,8 @@ function process_6()
 	//событие которое вызывается один раз для инициализации
 	if (on_start===true)
 	{		
+		//проигрываем звук
+		game_res.resources.lose.sound.play();
 		
 		//убираем ненужные объекты
 		c.add_anim_out_pos(objects.arrow,		a_out,objects.arrow.x+300,		objects.arrow.y					,0.02,true);		
@@ -1347,7 +1395,10 @@ function process_6()
 	
 	//это нажатие кнопки
 	function button_down()
-	{
+	{		
+		//звук
+		game_res.resources.click.sound.play();
+		
 		g_process=process_2;
 		on_start=true;
 		
@@ -1372,9 +1423,16 @@ function process_6()
 //это эпизод паузы
 function process_7()
 {	
+
+
+
+
 	//событие которое вызывается один раз для инициализации
 	if (on_start===true)
 	{		
+
+		//звук
+		game_res.resources.click.sound.play();
 		
 		//убираем ненужные объекты
 		c.add_anim_out_pos(objects.pause_button, a_out,objects.pause_button.x+200,		objects.pause_button.y	,0.04,true);		
@@ -1397,6 +1455,9 @@ function process_7()
 	function button_down()
 	{
 		
+		//звук
+		game_res.resources.click.sound.play();
+		
 		//убираем  объекты
 		c.add_anim_out_pos(objects.pause_block, a_out,objects.pause_block.x+400,		objects.pause_block.y	,0.04,true);	
 		c.add_anim_out_pos(objects.resume_button, a_out,objects.resume_button.x-400,		objects.resume_button.y	,0.04,true);
@@ -1418,6 +1479,33 @@ function process_7()
 	//анимация
 	c.process();
 }
+
+//это заключительный эпизод
+function process_8()
+{	
+	//событие которое вызывается один раз для инициализации
+	if (on_start===true)
+	{		
+
+		//звук
+		game_res.resources.music.sound.volume=1;
+		game_res.resources.music.sound.play();
+		
+		//добавляем новые объекты
+		c.add_anim_in_pos(objects.game_end,			a_in,-500,	0	,0.02,true);
+	
+	
+		//другие инициализации
+		on_start=false;
+	}
+	
+	
+	//анимация
+	c.process();
+}
+
+
+
 
 function load()
 {
@@ -1446,17 +1534,46 @@ function load()
 			if (load_list[l][i][0]=="sprite" || load_list[l][i][0]=="image") 
 				game_res.add(load_list[l][i][1], "res/"+load_list[l][i][1]+".png");
 		
+	//загружаем звуки
+	game_res.add('baloon_burst','sounds/baloon_burst.mp3');
+	game_res.add('win_level','sounds/win_level.mp3');
+	game_res.add('click','sounds/click.mp3');
+	game_res.add('warning','sounds/warning.mp3');
+	game_res.add('arrow_send','sounds/arrow_send.mp3');
+	game_res.add('multi','sounds/multi.mp3');
+	game_res.add('arrows_bonus','sounds/arrows_bonus.mp3');
+	game_res.add('freeze_bonus','sounds/freeze_bonus.mp3');
+	game_res.add('lose','sounds/lose.mp3');
+	game_res.add('brick','sounds/brick.mp3');
+	game_res.add('music','sounds/music.mp3');
 
 	game_res.load(load_complete);		
 	game_res.onProgress.add(progress);
 	
 	function load_complete()
+	{		
+		document.getElementById("m_button").style.display =  "block";
+	}
+	
+
+	function progress(loader, resource)
 	{
+		document.getElementById("m_bar").style.width =  Math.round(loader.progress)+"%";
+	}
+	
+}
+
+	function start_button_pressed()
+	{
+		document.getElementById("m_bar").outerHTML = "";		
+		document.getElementById("top_w").outerHTML = "";
+		document.getElementById("m_progress").outerHTML = "";
+		document.getElementById("m_button_win").outerHTML = "";
+	
+
 		
-		var elem = document.getElementById('myProgress');
-		elem.parentNode.removeChild(elem);
 		
-		document.getElementById("demo").innerHTML = ""
+		
 		app = new PIXI.Application({width:M_WIDTH, height:M_HEIGHT,antialias:true,backgroundColor : 0x060600});
 		app.renderer.autoResize=true;
 		app.renderer.resize(window.innerWidth,window.innerHeight);
@@ -1547,14 +1664,9 @@ function load()
 			}
 		);
 	
+		
 	}
 
-	function progress(loader, resource)
-	{
-		document.getElementById("myBar").style.width =  Math.round(loader.progress)+"%";
-	}
-	
-}
 
 function main_loop()
 {
