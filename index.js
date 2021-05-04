@@ -1609,7 +1609,7 @@ function load_yandex()
 				my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
 				my_data.pic_url		=	_player.getPhoto('medium');	
 				req_result='ok';
-				console.log(my_data.first_name);
+				console.log(my_data.uid);
 				
 			}).catch(err => {
 				req_result='yndx_get_play_error';
