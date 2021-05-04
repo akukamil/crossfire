@@ -1586,11 +1586,11 @@ function activate_start_button()
 
 function load_yandex()
 {			
-	var req_result = "66666";
+	var req_result = "-";
 	
 	if(typeof(YaGames)==='undefined')
 	{		
-		req_result='yndx_sdk_error';
+		req_result="yndx_sdk_error";
 		process_results();	
 	}
 	else
@@ -1608,18 +1608,16 @@ function load_yandex()
 				my_data.last_name	=	"";
 				my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
 				my_data.pic_url		=	_player.getPhoto('medium');	
-				req_result='ok';
-				console.log(my_data.uid);
-				console.log(req_result);
+				req_result="ok";
 				
 			}).catch(err => {
-				req_result='yndx_get_play_error';
+				req_result="yndx_get_play_error";
 			}).finally(()=>{				
 				process_results();				
 			})
 			
 		}).catch(err => {			
-			req_result='yndx_init_error';			
+			req_result="yndx_init_error";			
 		}).finally(()=>{			
 			process_results();			
 		})		
@@ -1628,7 +1626,7 @@ function load_yandex()
 
 	function process_results() {
 		
-		if (req_result==='ok') {
+		if (req_result==="ok") {
 			load_user_data_from_firebase();			
 		}
 		else {
