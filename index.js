@@ -1586,7 +1586,7 @@ function activate_start_button()
 
 function load_yandex()
 {			
-	var req_result = "";
+	var req_result = "66666";
 	
 	if(typeof(YaGames)==='undefined')
 	{		
