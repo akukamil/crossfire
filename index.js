@@ -1590,8 +1590,8 @@ function load_yandex()
 	
 	if(typeof(YaGames)==='undefined')
 	{		
-		this.req_result='yndx_sdk_error';
-		this.process_results();	
+		req_result='yndx_sdk_error';
+		process_results();	
 	}
 	else
 	{
@@ -1609,7 +1609,7 @@ function load_yandex()
 				my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
 				my_data.pic_url		=	_player.getPhoto('medium');	
 				req_result='ok';
-				
+				console.log(_player);
 				
 			}).catch(err => {
 				req_result='yndx_get_play_error';
