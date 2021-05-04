@@ -1614,13 +1614,15 @@ function load_yandex()
 			}).catch(err => {
 				req_result="yndx_get_play_error";
 			}).finally(()=>{				
-				process_results();				
+				process_results();	
+				console.log(req_result);
 			})
 			
 		}).catch(err => {			
 			req_result="yndx_init_error";			
 		}).finally(()=>{			
-			process_results();			
+			process_results();	
+			console.log(req_result);
 		})		
 	}				
 
