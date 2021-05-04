@@ -1556,10 +1556,32 @@ function load_user_data_from_firebase()
 	
 }	
 
+
+var ups={
+	
+	show: function() {
+		
+		anim.add_pos({obj:objects.ups_block,	param:'x',vis_on_end:true,func:'linear', val:[-450,'sx'],	speed:0.02});
+		anim.add_pos({obj:objects.ups_ok_button,	param:'x',vis_on_end:true,func:'linear', val:[450,'sx'],	speed:0.02});
+		
+	},
+	
+	close: function() {
+		
+		anim.add_pos({obj:objects.ups_block,	param:'x',vis_on_end:false,func:'linear', val:['sx',450],	speed:0.02});
+		anim.add_pos({obj:objects.ups_ok_button,	param:'x',vis_on_end:false,func:'linear', val:['sx',-450],	speed:0.02});
+		activate_start_button();
+		
+	}
+	
+	
+}
+
 function activate_start_button()
 {	
 	objects.button_1.texture=game_res.resources['button_1'].texture;	
 	objects.button_1.interactive=true;
+	objects.button_1.rotation=0;
 }
 
 function load_yandex()
@@ -1585,31 +1607,35 @@ function load_yandex()
 				my_data.first_name 	=	_player.getName();
 				my_data.last_name	=	"";
 				my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
-				my_data.pic_url		=	_player.getPhoto('medium');		
-				
-				this.req_result='ok';
+				my_data.pic_url		=	_player.getPhoto('medium');	
+				req_result='ok';
 				
 				
 			}).catch(err => {
-				this.req_result='yndx_get_play_error';
+				req_result='yndx_get_play_error';
 			}).finally(()=>{				
-				this.process_results();				
+				process_results();				
 			})
 			
 		}).catch(err => {			
-			this.req_result='yndx_init_error';			
+			req_result='yndx_init_error';			
 		}).finally(()=>{			
-			this.process_results();			
+			process_results();			
 		})		
 	}				
 
 
 	function process_results() {
 		
-		if (this.req_result==='ok')
-			load_user_data_from_firebase();
-		else
-			activate_start_button();
+		if (req_result==='ok') {
+			load_user_data_from_firebase();			
+		}
+		else {
+			ups.show();
+			console.log(req_result)
+						
+		}
+
 	}
 }
 
