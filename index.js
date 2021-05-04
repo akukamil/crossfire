@@ -1603,13 +1603,13 @@ function load_yandex()
 			
 			//получаем данные игрока
 			ysdk.getPlayer().then(_player => {
-	
-				my_data.first_name 	=	_player.getName();
+				let player=_player
+				my_data.first_name 	=	player.getName();
 				my_data.last_name	=	"";
-				my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
-				my_data.pic_url		=	_player.getPhoto('medium');	
+				my_data.uid			=	player.getUniqueID().replace("/", "Z");	
+				my_data.pic_url		=	player.getPhoto('medium');	
 				req_result='ok';
-				console.log(_player);
+				console.log(player);
 				
 			}).catch(err => {
 				req_result='yndx_get_play_error';
