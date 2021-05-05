@@ -1601,29 +1601,22 @@ function load_yandex()
 			//фиксируем SDK в глобальной переменной
 			window.ysdk=ysdk;
 			
-			//получаем данные игрока
-			ysdk.getPlayer().then(_player => {
-
-				my_data.first_name 	=	_player.getName();
-				my_data.last_name	=	"";
-				my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
-				my_data.pic_url		=	_player.getPhoto('medium');	
-				req_result="ok";
-				console.log(req_result);
-				
-			}).catch(err => {
-				req_result="yndx_get_play_error";
-			}).finally(()=>{				
-				process_results();	
-				console.log(req_result);
-			})
+			return ysdk.getPlayer();
 			
-		}).catch(err => {			
-			req_result="yndx_init_error";			
-		}).finally(()=>{			
-			process_results();	
-			console.log(req_result);
-		})		
+		}).then(_player=>{
+			
+			my_data.first_name 	=	_player.getName();
+			my_data.last_name	=	"";
+			my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
+			my_data.pic_url		=	_player.getPhoto('medium');	
+			req_result="ok";
+			
+		}).catch((err)=>{
+			console.log(err);
+			req_result="error";			
+		}).finally(()=>{
+			process_results();			
+		})
 	}				
 
 
