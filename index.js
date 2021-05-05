@@ -1584,52 +1584,147 @@ function activate_start_button()
 	objects.button_1.rotation=0;
 }
 
-function load_yandex()
-{			
-	var req_result = "-";
-	
-	if(typeof(YaGames)==='undefined')
-	{		
-		req_result="yndx_sdk_error";
-		process_results();	
-	}
-	else
-	{
-		//если sdk яндекса найден
-		YaGames.init({}).then(ysdk => {
-			
-			//фиксируем SDK в глобальной переменной
-			window.ysdk=ysdk;
-			
-			return ysdk.getPlayer();
-			
-		}).then(_player=>{
-			
-			my_data.first_name 	=	_player.getName();
-			my_data.last_name	=	"";
-			my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
-			my_data.pic_url		=	_player.getPhoto('medium');	
-			req_result="ok";
-			
-		}).catch((err)=>{
-			console.log(err);
-			req_result="error";			
-		}).finally(()=>{
-			process_results();			
-		})
-	}				
-
-
-	function process_results() {
+var load_user_data={
 		
-		if (req_result==="ok") {
-			load_user_data_from_firebase();			
+	// эта функция вызывается один раз в начале игры
+	
+	req_result: "",
+	yndx_no_personal_data:0,
+			
+	vk: function() {
+		
+		if(typeof(VK)==='undefined')
+		{		
+			load_user_data.req_result='vk_sdk_error';
+			load_user_data.process_results();	
 		}
-		else {
+		else
+		{
+			
+			VK.init(
+			
+				//функция удачной инициализации вконтакте
+				function()
+				{
+
+					VK.api(
+						"users.get",
+						{access_token: '03af491803af491803af4918d103d800b3003af03af491863c040d61bee897bd2785a50',fields: 'photo_100'},
+						function (data) {
+							if (data.error===undefined) {
+								
+								my_data.first_name=data.response[0].first_name;
+								my_data.last_name=data.response[0].last_name;
+								my_data.uid="vk"+data.response[0].id;
+								my_data.pic_url=data.response[0].photo_100;
+								load_user_data.req_result="ok";	
+								load_user_data.process_results();	
+								
+							}	
+							else
+							{
+								load_user_data.req_result="vk_error";	
+								load_user_data.process_results();	
+							}
+
+						}
+					)
+					
+				},	
+				
+				//функция неудачной инициализации вконтакте
+				function()
+				{
+					load_user_data.req_result='vk_init_error';
+					load_user_data.process_results();				
+				},
+
+				//версия апи
+				'5.130');		
+			
+		}
+
+	},
+
+	yandex: function() {
+	
+		
+		if(typeof(YaGames)==='undefined')
+		{		
+			this.req_result='yndx_sdk_error';
+			this.process_results();	
+		}
+		else
+		{
+			//если sdk яндекса найден
+			YaGames.init({}).then(ysdk => {
+				
+				//фиксируем SDK в глобальной переменной
+				window.ysdk=ysdk;
+				
+				return ysdk.getPlayer();
+			}).then((_player)=>{
+				
+				my_data.first_name 	=	_player.getName();
+				my_data.last_name	=	"";
+				my_data.uid			=	_player.getUniqueID().replace("/", "Z");	
+				my_data.pic_url		=	_player.getPhoto('medium');		
+				
+				console.log(my_data.uid);
+				this.req_result='ok';
+								
+				if (my_data.first_name=="" || my_data.first_name=='')
+					this.yndx_no_personal_data=1
+				
+			}).catch(err => {		
+				console.log(err);
+				this.req_result='yndx_init_error';			
+			}).finally(()=>{			
+				this.process_results();			
+			})		
+			
+		}				
+
+	},
+
+	local: function() {	
+		
+		let test_id = prompt('Введите ID (будет добавле test)');
+		
+		this.req_result='ok'		
+		my_data.first_name="LOCAL"+test_id; ;
+		my_data.last_name="test"+test_id;
+		my_data.uid="test"+test_id;
+		my_data.pic_url=null;
+		state="online";
+		
+		this.process_results();
+
+	},
+	
+	process_results: function() {
+		
+		//загружаем мою аватарку на табло
+		if (my_data.pic_url!=undefined) {			
+			let loader2 = new PIXI.Loader();
+			loader2.add('my_avatar', my_data.pic_url,{loadType: PIXI.loaders.Resource.LOAD_TYPE.IMAGE});
+			loader2.load((loader, resources) => {objects.my_avatar.texture = resources.my_avatar.texture;});				
+		}
+					
+		if (this.req_result!=="ok") {			
+			my_data.first_name 	=	"Я";
+			my_data.last_name	=	"";
+			my_data.uid			=	"";	
+			my_data.pic_url		=	undefined;	
+			state="offline";			
+			big_message.show("Вы не авторизованы в социальной сети. Доступна только оффлайн игра.")
+		}		
+		
+		//считываем рейтинг и обновляем данные об имени, фамилии и фото
+		if (this.req_result==="ok")
+			load_user_data_from_firebase();	
+		else		
 			ups.show();
-			console.log(req_result)
-						
-		}
 
 	}
 }
@@ -1735,7 +1830,7 @@ function load_resources()
 				
 				
 		//загружаем данные из базы данных
-		load_yandex();				
+		load_user_data.yandex();				
 
 		//запускаем заставку
 		g_process=process_1;
