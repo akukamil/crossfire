@@ -1705,12 +1705,6 @@ var load_user_data={
 	
 	process_results: function() {
 		
-		//загружаем мою аватарку на табло
-		if (my_data.pic_url!=undefined) {			
-			let loader2 = new PIXI.Loader();
-			loader2.add('my_avatar', my_data.pic_url,{loadType: PIXI.loaders.Resource.LOAD_TYPE.IMAGE});
-			loader2.load((loader, resources) => {objects.my_avatar.texture = resources.my_avatar.texture;});				
-		}
 					
 		if (this.req_result==="ok") {
 			load_user_data_from_firebase();	
