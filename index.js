@@ -1160,7 +1160,8 @@ function process_5()
 		//добавляем основное окно
 		anim.add_pos({obj:objects.win,		param:'x',vis_on_end:true,func:'easeOutElastic',val:[-500, 		'sx'],	speed:0.01});
 				
-		firebase.database().ref("players/"+my_data.uid+"/level").set(level+1);	
+		if (my_data.uid!=="")
+			firebase.database().ref("players/"+my_data.uid+"/level").set(level+1);	
 		
 		//отключаем паузу и убираем ее
 		anim.add_pos({obj:objects.pause_button,	param:'y',vis_on_end:false,func:'linear', val:['sy',	800],	speed:0.02});
@@ -1711,20 +1712,12 @@ var load_user_data={
 			loader2.load((loader, resources) => {objects.my_avatar.texture = resources.my_avatar.texture;});				
 		}
 					
-		if (this.req_result!=="ok") {			
-			my_data.first_name 	=	"Я";
-			my_data.last_name	=	"";
-			my_data.uid			=	"";	
-			my_data.pic_url		=	undefined;	
-			state="offline";			
-			big_message.show("Вы не авторизованы в социальной сети. Доступна только оффлайн игра.")
-		}		
-		
-		//считываем рейтинг и обновляем данные об имени, фамилии и фото
-		if (this.req_result==="ok")
+		if (this.req_result==="ok") {
 			load_user_data_from_firebase();	
-		else		
+		} else {			
 			ups.show();
+			my_data.uid = "";	
+		}
 
 	}
 }
