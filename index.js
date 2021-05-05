@@ -1816,6 +1816,9 @@ function load_resources()
 		}
 				
 				
+		//кнопка запуска сначала не загружена
+		objects.button_1.texture=game_res.resources['button_1_loading'].texture;	
+				
 		//загружаем данные из базы данных
 		load_user_data.yandex();				
 
