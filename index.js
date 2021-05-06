@@ -1747,14 +1747,13 @@ function load_resources()
 	function load_complete()
 	{		
 		document.getElementById("m_bar").outerHTML = "";		
-		document.getElementById("top_w").outerHTML = "";
 		document.getElementById("m_progress").outerHTML = "";
-		document.getElementById("m_button_win").outerHTML = "";
 		
 		app = new PIXI.Application({width:M_WIDTH, height:M_HEIGHT,antialias:true,backgroundColor : 0x060600});
-		app.renderer.autoResize=true;
-		app.renderer.resize(window.innerWidth,window.innerHeight);
+		//app.renderer.autoResize=true;
+		resize(window.innerWidth,window.innerHeight);
 		window.addEventListener("resize", resize);
+				
 				
 		document.body.appendChild(app.view);
 		document.body.style.backgroundColor = "blue";
