@@ -1716,6 +1716,13 @@ var load_user_data={
 	}
 }
 
+var tab_change=function(){
+	
+	if (document.hidden===true)
+		game_res.resources.music.sound.stop();
+	
+}
+
 function load_resources()
 {	
 	
@@ -1754,6 +1761,8 @@ function load_resources()
 		resize(window.innerWidth,window.innerHeight);
 		window.addEventListener("resize", resize);
 				
+				
+		document.addEventListener("visibilitychange", tab_change);
 				
 		document.body.appendChild(app.view);
 		document.body.style.backgroundColor = "blue";
