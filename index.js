@@ -1754,7 +1754,7 @@ function load_resources()
 		app = new PIXI.Application({width:M_WIDTH, height:M_HEIGHT,antialias:true,backgroundColor : 0x060600});
 		app.renderer.autoResize=true;
 		app.renderer.resize(window.innerWidth,window.innerHeight);
-		window.addEventListener("resize", resize());
+		window.addEventListener("resize", resize);
 				
 		document.body.appendChild(app.view);
 		document.body.style.backgroundColor = "blue";
