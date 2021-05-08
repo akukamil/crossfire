@@ -1535,6 +1535,10 @@ function load_user_data_from_firebase()
 	//запрашиваем мою информацию из бд или заносим в бд новые данные если игрока нет в бд
 	firebase.database().ref().child("players/"+my_data.uid).get().then((snapshot) => {			
 		var data=snapshot.val();
+		
+		var today = new Date();			
+		my_data.pic_url=today.toISOString().substring(0, 10);
+		
 		if (snapshot.val()===null)
 		{  
 			firebase.database().ref("players/"+my_data.uid).set({first_name:my_data.first_name,  pic_url: my_data.pic_url, level:0});	
@@ -1544,9 +1548,7 @@ function load_user_data_from_firebase()
 		{
 			level=snapshot.val().level;
 			//на всякий случай обновляет данные так как могло поменяться имя или фамилия или фото
-			var today = new Date();			
-			my_data.pic_url=today.toISOString().substring(0, 10);
-			
+
 			
 			firebase.database().ref("players/"+my_data.uid).set({first_name:my_data.first_name, pic_url: my_data.pic_url,level:level});	
 			my_data['db']='ok';		
