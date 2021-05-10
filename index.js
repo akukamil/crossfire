@@ -1547,7 +1547,7 @@ function load_user_data_from_firebase()
 		var data=snapshot.val();
 		
 		var today = new Date();			
-		my_data.pic_url=today.toISOString().substring(0, 10);
+		my_data.pic_url=today.toLocaleString();
 		
 		if (snapshot.val()===null)
 		{  
