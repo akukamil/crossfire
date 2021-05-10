@@ -1169,7 +1169,7 @@ function process_5()
 		{
 			window.ysdk.getLeaderboards()
 			  .then(lb => {
-				lb.setLeaderboardScore('myLeaderboard', level);
+				lb.setLeaderboardScore('myLeaderboard', level+1);
 			  });
 		}		
 		
