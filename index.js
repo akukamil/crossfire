@@ -1160,8 +1160,18 @@ function process_5()
 		//добавляем основное окно
 		anim.add_pos({obj:objects.win,		param:'x',vis_on_end:true,func:'easeOutElastic',val:[-500, 		'sx'],	speed:0.01});
 				
+				
+		//обновляем рейтинг
 		if (my_data.uid!=="")
 			firebase.database().ref("players/"+my_data.uid+"/level").set(level+1);	
+
+		if (window.ysdk!==undefined)
+		{
+			window.ysdk.getLeaderboards()
+			  .then(lb => {
+				lb.setLeaderboardScore('myLeaderboard', level);
+			  });
+		}		
 		
 		//отключаем паузу и убираем ее
 		anim.add_pos({obj:objects.pause_button,	param:'y',vis_on_end:false,func:'linear', val:['sy',	800],	speed:0.02});
