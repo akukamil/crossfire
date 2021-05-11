@@ -1765,7 +1765,6 @@ var tab_change=function(){
 
 function load_resources()
 {	
-	vkBridge.send('VKWebAppInit');
 	//добавляем из листа загрузки
 	for (var i=0;i<load_list.length;i++)
 		if (load_list[i][0]=="sprite" || load_list[i][0]=="image") 
