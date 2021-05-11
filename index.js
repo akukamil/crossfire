@@ -1,5 +1,5 @@
 var PI=3.1415926535,PI_2=6.283185307, M_WIDTH=450, M_HEIGHT=800, game_tick;
-var app, game_res=new PIXI.Loader(), game_tick=0, g_spd=5, objects={}, baloons=[], a_cnt=20
+var app, game_res=new PIXI.Loader(), game_tick=0, g_spd=5, objects={}, baloons=[], a_cnt=20,sn="";
 var screen_0, screen_1, screen_2, screen_3;
 var my_data={};
 
@@ -1233,11 +1233,7 @@ function process_5()
 	function next_button_down(lev_inc)
 	{
 		//показываем рекламу
-		if (window.ysdk===undefined)
-		{
-			go_next_lev(lev_inc)
-		}
-		else
+		if (sn==="yandex")
 		{
 			window.ysdk.adv.showFullscreenAdv({
 			  callbacks: {
@@ -1246,6 +1242,32 @@ function process_5()
 						}
 			})			
 		}
+		
+		if (sn==="vk")
+		{
+			admanInit(
+			
+				{
+				  user_id: my_data.uid.substring(2),
+				  app_id: 7851674,
+				  mobile: true,
+				  type: 'preloader'         // 'preloader' or 'rewarded' (default - 'preloader')
+				},
+			
+			
+				function onAdsReady(adman) {
+				  adman.onStarted(function () {(go_next_lev(lev_inc)}).bind(process_5));
+				  adman.onCompleted(function() {(go_next_lev(lev_inc)}).bind(process_5));          
+				  adman.onSkipped(function() {(go_next_lev(lev_inc)}).bind(process_5));          
+				  adman.onClicked(function() {});
+				  adman.start('preroll');
+				},							
+				
+				function onNoAds() {(function() {go_next_lev(lev_inc)}).bind(process_5)}
+			);		
+		}
+		
+		
 	}
 	
 	function go_next_lev(lev_inc) {
@@ -1629,7 +1651,7 @@ var load_user_data={
 						{access_token: '03af491803af491803af4918d103d800b3003af03af491863c040d61bee897bd2785a50',fields: 'photo_100'},
 						function (data) {
 							if (data.error===undefined) {
-								
+								sn="vk";
 								my_data.first_name=data.response[0].first_name;
 								my_data.last_name=data.response[0].last_name;
 								my_data.uid="vk"+data.response[0].id;
@@ -1678,7 +1700,7 @@ var load_user_data={
 				
 				//фиксируем SDK в глобальной переменной
 				window.ysdk=ysdk;
-				
+				sn="yandex";
 				return ysdk.getPlayer();
 			}).then((_player)=>{
 				
@@ -1844,7 +1866,16 @@ function load_resources()
 		objects.button_1.texture=game_res.resources['button_1_loading'].texture;	
 				
 		//загружаем данные из базы данных
-		load_user_data.yandex();				
+		let env=window.location.href;
+		if (env.includes('vk.com')) {
+			social_network='vk';
+			load_user_data.vk();				 
+		}
+
+		if (env.includes('yandex')) {
+			social_network='yandex';
+			load_user_data.yandex();	 			 
+		}				
 
 		//запускаем заставку
 		g_process=process_1;

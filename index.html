@@ -17,16 +17,6 @@
 		flex-direction: column
 	}
     
-  #top_w {
-	  background: black;
-	  justify-content: flex-start;
-	  align-items: center;
-	  position: relative;
-	  padding: 0 5px;
-	  display: flex;
-	  height: 40%;
-	  width: 100%;
-	}
   
   #m_progress {
 	  background: rgba(11,255,255,0.1);
@@ -45,40 +35,8 @@
 	  border-radius: 100px;
 	  background: #fff;
 	  height: 70%;
-	  width: 10%;
+	  width: 0%;
 	}
-	
-
-	#m_button_win {
-	   background: black;
-	   width: 40%;
-	   height: 40%;
-	   padding: 10px;
-	   align-items: center;
-	   display: flex;
-
-	}
-
-	#m_button {
-		width: 100%;
-		height:80px;
-		background: rgba(66,66,66,0.1);;
-		color: white;
-		border-radius: 20px;
-		font-size: 30px;
-		text-align: center;
-		display: none
-		
-		
-	}
-
-	@font-face{
-		font-family: "m_font";
-		src: url("m_font.otf");
-	}
-	
-
-	
 	
 	
 </style>
@@ -86,15 +44,9 @@
 
 
 
-<div id="top_w">
-</div>
 
 <div id="m_progress">
   <div id="m_bar"></div>
-</div>
-
-<div id="m_button_win">
-<button id="m_button" onclick="start_button_pressed()">START</button>
 </div>
 
 
@@ -121,7 +73,7 @@
 <script src="load_list.txt"> </script>	
 <script src="pixi-legacy.min.js"></script>	
 <script src="pixi-sound.js"></script>	
-<script src="index.js"> </script>
+<script type="text/javascript" src="index.js" charset="utf-8"></script>
 <script src="https://yandex.ru/games/sdk/v2"></script>
 
 <body onload="load_resources()">
