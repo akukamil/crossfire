@@ -1256,14 +1256,14 @@ function process_5()
 			
 			
 				function onAdsReady(adman) {
-				  adman.onStarted(function () {(go_next_lev(lev_inc)}).bind(process_5));
-				  adman.onCompleted(function() {(go_next_lev(lev_inc)}).bind(process_5));          
-				  adman.onSkipped(function() {(go_next_lev(lev_inc)}).bind(process_5));          
-				  adman.onClicked(function() {});
+				  adman.onStarted(function() {go_next_lev(lev_inc)}.bind(process_5));
+				  adman.onCompleted(function() {go_next_lev(lev_inc)}.bind(process_5));          
+				  adman.onSkipped(function() {go_next_lev(lev_inc)}.bind(process_5));          
+				  adman.onClicked (function() {});
 				  adman.start('preroll');
 				},							
 				
-				function onNoAds() {(function() {go_next_lev(lev_inc)}).bind(process_5)}
+				function onNoAds() {(function() {go_next_lev(lev_inc)).bind(process_5)}
 			);		
 		}
 		
