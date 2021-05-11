@@ -1648,7 +1648,7 @@ var load_user_data={
 
 					VK.api(
 						"users.get",
-						{access_token: '03af491803af491803af4918d103d800b3003af03af491863c040d61bee897bd2785a50',fields: 'photo_100'},
+						{access_token: 'b25898c7b25898c7b25898c733b22f565dbb258b25898c7d2c20ee45ab4bce07a1ee1ca',fields: 'photo_100'},
 						function (data) {
 							if (data.error===undefined) {
 								sn="vk";
