@@ -1404,7 +1404,7 @@ function process_6()
 				  adman.onStarted(function() {});
 				  adman.onCompleted(function() {arrows_bonus=5;ad_finish()}.bind(process_6));         
 				  adman.onSkipped(function() {ad_finish()}.bind(process_6));          
-				  adman.onClicked (function() {ad_finish()}.bind(process_6)});
+				  adman.onClicked (function() {ad_finish()}.bind(process_6));
 				  adman.start('preroll');
 				},							
 				
