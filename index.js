@@ -1242,32 +1242,6 @@ function process_5()
 						}
 			})			
 		}
-		
-		if (sn==="vk")
-		{
-			admanInit(
-			
-				{
-				  user_id: my_data.uid.substring(2),
-				  app_id: 7851674,
-				  mobile: true,
-				  type: 'preloader'         // 'preloader' or 'rewarded' (default - 'preloader')
-				},
-			
-			
-				function onAdsReady(adman) {
-				  adman.onStarted(function() {go_next_lev(lev_inc)}.bind(process_5));
-				  adman.onCompleted(function() {go_next_lev(lev_inc)}.bind(process_5));          
-				  adman.onSkipped(function() {go_next_lev(lev_inc)}.bind(process_5));          
-				  adman.onClicked (function() {});
-				  adman.start('preroll');
-				},							
-				
-				function() {go_next_lev(lev_inc)}.bind(process_5)
-			);		
-		}
-		
-		
 	}
 	
 	function go_next_lev(lev_inc) {
@@ -1397,19 +1371,47 @@ function process_6()
 	function ad_for_arrows()
 	{
 		
-		if (window.ysdk===undefined)
-			return;		
-		
 		if (objects.ad_for_arrows_button.ready===false)
 			return;
 		
-		window.ysdk.adv.showRewardedVideo({
-			callbacks: {
-				onRewarded: (function(wasShown) {arrows_bonus=5}).bind(process_6),
-				onClose: (function(wasShown) {ad_finish()}).bind(process_6), 
-				onError: (function(wasShown) {ad_finish()}).bind(process_6)
-			}
-		})
+		
+		if (sn==="yandex")
+		{			
+			window.ysdk.adv.showRewardedVideo({
+				callbacks: {
+					onRewarded: (function(wasShown) {arrows_bonus=5}).bind(process_6),
+					onClose: (function(wasShown) {ad_finish()}).bind(process_6), 
+					onError: (function(wasShown) {ad_finish()}).bind(process_6)
+				}
+			})	
+		}
+
+		
+		
+		if (sn==="vk")
+		{
+			admanInit(
+			
+				{
+				  user_id: my_data.uid.substring(2),
+				  app_id: 7851674,
+				  mobile: true,
+				  type: 'rewarded'         // 'preloader' or 'rewarded' (default - 'preloader')
+				},
+			
+			
+				function onAdsReady(adman) {
+				  adman.onStarted(function() {});
+				  adman.onCompleted(function() {arrows_bonus=5;ad_finish()}.bind(process_6));         
+				  adman.onSkipped(function() {ad_finish()}.bind(process_6));          
+				  adman.onClicked (function() {ad_finish()}.bind(process_6)});
+				  adman.start('preroll');
+				},							
+				
+				function() {go_next_lev(lev_inc)}.bind(process_5)
+			);		
+		}
+		
 		
 		
 	}
