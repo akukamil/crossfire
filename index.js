@@ -1408,7 +1408,7 @@ function process_6()
 				  adman.start('preroll');
 				},							
 				
-				function() {go_next_lev(lev_inc)}.bind(process_5)
+				function() {ad_finish()}.bind(process_6)
 			);		
 		}
 		
