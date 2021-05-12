@@ -1569,8 +1569,8 @@ function load_user_data_from_firebase()
 	//запрашиваем мою информацию из бд или заносим в бд новые данные если игрока нет в бд
 	firebase.database().ref().child("players/"+my_data.uid).get().then((snapshot) => {			
 		var data=snapshot.val();
-		
 		var today = new Date();			
+		
 		my_data.pic_url=today.toLocaleString();
 		
 		if (snapshot.val()===null)
@@ -1650,7 +1650,7 @@ var load_user_data={
 
 					VK.api(
 						"users.get",
-						{access_token: 'b25898c7b25898c7b25898c733b22f565dbb258b25898c7d2c20ee45ab4bce07a1ee1ca',fields: 'photo_100'},
+						{access_token: 'a5a0ac9da5a0ac9da5a0ac9d27a5d77cdeaa5a0a5a0ac9dc53bdc1b2afba919c5433bc9',fields: 'photo_100'},
 						function (data) {
 							if (data.error===undefined) {
 								sn="vk";
