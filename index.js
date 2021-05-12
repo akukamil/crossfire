@@ -1242,7 +1242,13 @@ function process_5()
 						}
 			})			
 		}
+		
+		//если вконтакте то следующий уровень
+		if (sn==="vk")
+			go_next_lev(lev_inc);
+		
 	}
+	
 	
 	function go_next_lev(lev_inc) {
 		
