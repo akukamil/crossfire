@@ -1083,8 +1083,8 @@ function process_3() {
 		}
 
 		//
-		if (bursted_baloons>0 && game_ended==false)
-		//if ((bursted_baloons + baloons_finished) == baloons_cnt && game_ended == false)
+		//if (bursted_baloons>0 && game_ended==false)
+		if ((bursted_baloons + baloons_finished) == baloons_cnt && game_ended == false)
 		{
 			game_ended = true;
 			g_process = function(){win.process(1)};
@@ -2086,7 +2086,6 @@ var user_data = {
 	
 	init_firebase: function() {
 
-		alert("init_firebase");
 		//запрашиваем мою информацию из бд или заносим в бд новые данные если игрока нет в бд
 		firebase.database().ref().child("players/"+my_data.uid).get().then((snapshot) => {			
 			var data=snapshot.val();
