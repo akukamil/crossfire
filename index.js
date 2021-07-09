@@ -1375,8 +1375,8 @@ var win = {
 		if (game_platform==="VK_MINIAPP") {
 					 
 			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"preloader"})
-			.then(data => function() {win.go_next_lev(lev_inc)})
-			.catch(error => function() {win.go_next_lev(lev_inc)});
+			.then(data => win.go_next_lev(lev_inc))
+			.catch(error => win.go_next_lev(lev_inc));
 		}
 
 		if (game_platform==="LOCAL")
