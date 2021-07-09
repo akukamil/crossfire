@@ -1343,8 +1343,8 @@ var win = {
 			//показываем рекламу
 			window.ysdk.adv.showFullscreenAdv({
 			  callbacks: {
-				onClose: function() {this.go_next_lev(lev_inc).bind(process_5)}, 
-				onError: function() {this.go_next_lev(lev_inc).bind(process_5)}
+				onClose: function() {win.go_next_lev(lev_inc)}, 
+				onError: function() {win.go_next_lev(lev_inc)}
 						}
 			})
 		}
@@ -1362,8 +1362,8 @@ var win = {
 			
 				function onAdsReady(adman) {
 				  adman.onStarted(function () {});
-				  adman.onCompleted(function() {this.go_next_lev(lev_inc).bind(process_5)});          
-				  adman.onSkipped(function() {this.go_next_lev(lev_inc).bind(process_5)});          
+				  adman.onCompleted(function() {win.go_next_lev(lev_inc)});          
+				  adman.onSkipped(function() {win.go_next_lev(lev_inc)});          
 				  adman.onClicked(function() {});
 				  adman.start('preroll');
 				},							
@@ -1375,12 +1375,12 @@ var win = {
 		if (game_platform==="VK_MINIAPP") {
 					 
 			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"preloader"})
-			.then(data => function() {this.go_next_lev(lev_inc).bind(process_5)})
-			.catch(error => function() {this.go_next_lev(lev_inc).bind(process_5)});
+			.then(data => function() {win.go_next_lev(lev_inc)})
+			.catch(error => function() {win.go_next_lev(lev_inc)});
 		}
 
 		if (game_platform==="LOCAL")
-			this.go_next_lev(lev_inc)
+			win.go_next_lev(lev_inc)
 	
 	},
 
