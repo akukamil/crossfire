@@ -1368,7 +1368,7 @@ var win = {
 				  adman.start('preroll');
 				},							
 				
-				function onNoAds() {this.go_next_lev(lev_inc).bind(process_5)}
+				function onNoAds() {win.go_next_lev(lev_inc)}
 			);		
 		}		
 				
