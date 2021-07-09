@@ -1075,7 +1075,7 @@ function process_3() {
 	//секундная проверка событий
 	if (game_tick > sec_check + 60) {
 
-		//if (bursted_baloons>0 && game_ended==false)
+
 		if (life == 0 && game_ended == false) {
 			game_ended = true;
 			g_process = function(){lose.process(1)};
@@ -1786,43 +1786,15 @@ var ups = {
 
 	show: function() {
 
-		anim.add_pos({
-			obj: objects.ups_block,
-			param: 'x',
-			vis_on_end: true,
-			func: 'linear',
-			val: [-450, 'sx'],
-			speed: 0.02
-		});
-		anim.add_pos({
-			obj: objects.ups_ok_button,
-			param: 'x',
-			vis_on_end: true,
-			func: 'linear',
-			val: [450, 'sx'],
-			speed: 0.02
-		});
+		anim.add_pos({	obj: objects.ups_block,	param: 'x',	vis_on_end: true,	func: 'linear',	val: [-450, 'sx'],	speed: 0.02	});
+		anim.add_pos({	obj: objects.ups_ok_button,	param: 'x',	vis_on_end: true,	func: 'linear',	val: [450, 'sx'],	speed: 0.02	});
 
 	},
 
 	close: function() {
 
-		anim.add_pos({
-			obj: objects.ups_block,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sx', 450],
-			speed: 0.02
-		});
-		anim.add_pos({
-			obj: objects.ups_ok_button,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sx', -450],
-			speed: 0.02
-		});
+		anim.add_pos({	obj: objects.ups_block,	param: 'x',	vis_on_end: false,	func: 'linear',	val: ['sx', 450],	speed: 0.02	});
+		anim.add_pos({	obj: objects.ups_ok_button,	param: 'x',	vis_on_end: false,	func: 'linear',	val: ['sx', -450],	speed: 0.02	});
 		activate_start_button();
 
 	}
@@ -2175,7 +2147,7 @@ function load_resources() {
 			width: M_WIDTH,
 			height: M_HEIGHT,
 			antialias: true,
-			backgroundColor: 0x060600
+			backgroundColor: 0xbbd5f8
 		});
 		//app.renderer.autoResize=true;
 		resize(window.innerWidth, window.innerHeight);
@@ -2184,7 +2156,7 @@ function load_resources() {
 		document.addEventListener("visibilitychange", tab_change);
 
 		document.body.appendChild(app.view);
-		document.body.style.backgroundColor = "blue";
+		document.body.style.backgroundColor = "rgb(157,195,230)";
 
 		//создаем спрайты и массивы спрайтов и запускаем первую часть кода
 		for (var i = 0; i < load_list.length; i++) {
