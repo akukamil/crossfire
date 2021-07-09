@@ -12,11 +12,7 @@ var app, game_res = new PIXI.Loader(),
 	sn = "";
 var screen_0, screen_1, screen_2, screen_3;
 var my_data = {};
-var load_list=[["sprite","bcg5","objects[obj_name].interactive=true;objects[obj_name].sx=objects[obj_name].x=-20;objects[obj_name].sy=objects[obj_name].y=-10;","app.stage.addChild(objects[obj_name]);"],["sprite","game_name","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=193;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["sprite","button_1","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=220;objects[obj_name].sy=objects[obj_name].y=620;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_1.button_down();","app.stage.addChild(objects[obj_name]);"],["sprite","baloon5","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=166;objects[obj_name].sy=objects[obj_name].y=408;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["sprite","bow5","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=294;objects[obj_name].sy=objects[obj_name].y=500;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["image","baloon",""],["image","arrow",""],["image","bow",""],["image","bow2",""],["image","baloon_bonus_arrows",""],["image","baloon_bonus_slow",""],["image","brick_baloon",""],["image","bonus_5",""],["image","bonus_1",""],["image","bonus_10",""],["image","baloon_bonus_hand",""],["image","baloon_bonus_hand2",""],["sprite","pause_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=360;objects[obj_name].sy=objects[obj_name].y=720;objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){process_3.button_down()};","app.stage.addChild(objects[obj_name]);"],["block","hand_click","objects[obj_name]=new PIXI.AnimatedSprite([game_res.resources['hand_click_0'].texture,game_res.resources['hand_click_1'].texture]);objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=330;objects[obj_name].sy=objects[obj_name].y=500;objects[obj_name].width=200;objects[obj_name].height=229.99990234375;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].animationSpeed=0.1;","app.stage.addChild(objects[obj_name]);"],["image","hand_click_0",""],["image","hand_click_1",""],["block","bow","objects[obj_name]=new PIXI.Sprite();objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=470;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].texture=game_res.resources['bow'].texture;","app.stage.addChild(objects[obj_name]);"],["block","arrow","objects[obj_name]=new arrow_class();objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=470;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].texture=game_res.resources['arrow'].texture;","app.stage.addChild(objects[obj_name]);"],["array","baloons",50,"var o = obj_name;var num=n;objects[o][num]=new baloon_class();objects[o][num].visible=false;objects[o][num].x=-30;objects[o][num].y=400;objects[o][num].sx=-30;objects[o][num].sy=400;objects[o][num].anchor.set(0.5,0.5);objects[o][num].alpha=0.8;objects[o][num].texture=game_res.resources['baloon'].texture;","var o = obj_name;var num=n;app.stage.addChild(objects[o][num]);"],["array","arrows",40,"var o = obj_name;var num=n;objects[o][num]=new arrow_class();objects[o][num].anchor.set(0.5,0.5);objects[o][num].texture=game_res.resources['arrow'].texture;objects[o][num].visible=false;","var o = obj_name;var num=n;app.stage.addChild(objects[o][num]);"],["block","level_note","objects[obj_name]=new PIXI.BitmapText('', {font: '32px Century Gothic'});objects[obj_name].sx=objects[obj_name].x=167;objects[obj_name].sy=objects[obj_name].y=83;objects[obj_name].anchor.set(0.5,0.5);",""],["block","arrows_info_text","objects[obj_name]=new PIXI.BitmapText('', {font: '30px Century Gothic'});objects[obj_name].sx=objects[obj_name].x=80;objects[obj_name].sy=objects[obj_name].y=13;",""],["sprite","arrows_info_3","objects[obj_name].sx=objects[obj_name].x=10;objects[obj_name].sy=objects[obj_name].y=-7;",""],["sprite","heart_icon","objects[obj_name].sx=objects[obj_name].x=170;objects[obj_name].sy=objects[obj_name].y=-7;",""],["block","life_info","objects[obj_name]=new PIXI.BitmapText('', {font: '30px Century Gothic'});objects[obj_name].sx=objects[obj_name].x=240;objects[obj_name].sy=objects[obj_name].y=13;",""],["cont","game_ui_cont","objects[obj_name]=new PIXI.Container();objects[obj_name].ready=true;objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=60;objects[obj_name].sy=objects[obj_name].y=0;","objects[obj_name].addChild(objects.arrows_info_3);objects[obj_name].addChild(objects.arrows_info_text);objects[obj_name].addChild(objects.heart_icon);objects[obj_name].addChild(objects.life_info);objects[obj_name].addChild(objects.level_note);app.stage.addChild(objects[obj_name]);"],["sprite","game_end","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","win","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","star1","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=50;objects[obj_name].sy=objects[obj_name].y=280;","app.stage.addChild(objects[obj_name]);"],["sprite","star2","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=170;objects[obj_name].sy=objects[obj_name].y=280;","app.stage.addChild(objects[obj_name]);"],["sprite","star3","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=290;objects[obj_name].sy=objects[obj_name].y=280;","app.stage.addChild(objects[obj_name]);"],["sprite","game_over","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","pause_block","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","retry_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=125;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_6.button_down(0);","app.stage.addChild(objects[obj_name]);"],["sprite","next_level_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=330;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){process_6.button_down(1)};","app.stage.addChild(objects[obj_name]);"],["sprite","resume_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_7.button_down();","app.stage.addChild(objects[obj_name]);"],["sprite","replay_level_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=130;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_6.button_down(0);","app.stage.addChild(objects[obj_name]);"],["sprite","bonus","objects[obj_name]=new PIXI.Sprite();objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=450;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["sprite","ad_for_arrows_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=325;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_6.ad_for_arrows();","app.stage.addChild(objects[obj_name]);"],["cont","message_box_cont","objects[obj_name]=new PIXI.Container();objects[obj_name].ready=true;objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=-10;","objects[obj_name].addChild(objects.message_box);objects[obj_name].addChild(objects.message_text);app.stage.addChild(objects[obj_name]);"],["sprite","message_box","objects[obj_name].sx=objects[obj_name].x=10;objects[obj_name].sy=objects[obj_name].y=10;",""],["block","message_text","objects[obj_name]=new PIXI.BitmapText('Привет', {font: '10px Century Gothic',align: 'center'});objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].x=220;objects[obj_name].y=45;",""],["image","button_1_loading",""],["sprite","ups_block","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","ups_ok_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=100;objects[obj_name].sy=objects[obj_name].y=570;objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){ups.close()};","app.stage.addChild(objects[obj_name]);"]];var is_normal_game = false;
-var level = 0;
-var arrows = 20;
-var life = 0;
-var last_baloon_send_time = 0;
+var load_list=[["sprite","bcg5","objects[obj_name].interactive=true;objects[obj_name].sx=objects[obj_name].x=-20;objects[obj_name].sy=objects[obj_name].y=-10;","app.stage.addChild(objects[obj_name]);"],["sprite","game_name","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=193;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["sprite","button_1","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=220;objects[obj_name].sy=objects[obj_name].y=620;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_1.button_down();","app.stage.addChild(objects[obj_name]);"],["sprite","baloon5","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=166;objects[obj_name].sy=objects[obj_name].y=408;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["sprite","bow5","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=294;objects[obj_name].sy=objects[obj_name].y=500;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["image","baloon",""],["image","arrow",""],["image","bow",""],["image","bow2",""],["image","baloon_bonus_arrows",""],["image","baloon_bonus_slow",""],["image","brick_baloon",""],["image","bonus_5",""],["image","bonus_1",""],["image","bonus_10",""],["image","baloon_bonus_hand",""],["image","baloon_bonus_hand2",""],["sprite","pause_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=360;objects[obj_name].sy=objects[obj_name].y=720;objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){process_3.button_down()};","app.stage.addChild(objects[obj_name]);"],["block","hand_click","objects[obj_name]=new PIXI.AnimatedSprite([game_res.resources['hand_click_0'].texture,game_res.resources['hand_click_1'].texture]);objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=330;objects[obj_name].sy=objects[obj_name].y=500;objects[obj_name].width=200;objects[obj_name].height=229.99990234375;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].animationSpeed=0.1;","app.stage.addChild(objects[obj_name]);"],["image","hand_click_0",""],["image","hand_click_1",""],["block","bow","objects[obj_name]=new PIXI.Sprite();objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=470;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].texture=game_res.resources['bow'].texture;","app.stage.addChild(objects[obj_name]);"],["block","arrow","objects[obj_name]=new arrow_class();objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=470;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].texture=game_res.resources['arrow'].texture;","app.stage.addChild(objects[obj_name]);"],["array","baloons",50,"var o = obj_name;var num=n;objects[o][num]=new baloon_class();objects[o][num].visible=false;objects[o][num].x=-30;objects[o][num].y=400;objects[o][num].sx=-30;objects[o][num].sy=400;objects[o][num].anchor.set(0.5,0.5);objects[o][num].alpha=0.8;objects[o][num].texture=game_res.resources['baloon'].texture;","var o = obj_name;var num=n;app.stage.addChild(objects[o][num]);"],["array","arrows",40,"var o = obj_name;var num=n;objects[o][num]=new arrow_class();objects[o][num].anchor.set(0.5,0.5);objects[o][num].texture=game_res.resources['arrow'].texture;objects[o][num].visible=false;","var o = obj_name;var num=n;app.stage.addChild(objects[o][num]);"],["block","level_note","objects[obj_name]=new PIXI.BitmapText('', {font: '32px Century Gothic'});objects[obj_name].sx=objects[obj_name].x=167;objects[obj_name].sy=objects[obj_name].y=83;objects[obj_name].anchor.set(0.5,0.5);",""],["block","arrows_info_text","objects[obj_name]=new PIXI.BitmapText('', {font: '30px Century Gothic'});objects[obj_name].sx=objects[obj_name].x=80;objects[obj_name].sy=objects[obj_name].y=13;",""],["sprite","arrows_info_3","objects[obj_name].sx=objects[obj_name].x=10;objects[obj_name].sy=objects[obj_name].y=-7;",""],["sprite","heart_icon","objects[obj_name].sx=objects[obj_name].x=170;objects[obj_name].sy=objects[obj_name].y=-7;",""],["block","life_info","objects[obj_name]=new PIXI.BitmapText('', {font: '30px Century Gothic'});objects[obj_name].sx=objects[obj_name].x=240;objects[obj_name].sy=objects[obj_name].y=13;",""],["cont","game_ui_cont","objects[obj_name]=new PIXI.Container();objects[obj_name].ready=true;objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=60;objects[obj_name].sy=objects[obj_name].y=0;","objects[obj_name].addChild(objects.arrows_info_3);objects[obj_name].addChild(objects.arrows_info_text);objects[obj_name].addChild(objects.heart_icon);objects[obj_name].addChild(objects.life_info);objects[obj_name].addChild(objects.level_note);app.stage.addChild(objects[obj_name]);"],["sprite","game_end","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","win","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","star1","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=50;objects[obj_name].sy=objects[obj_name].y=280;","app.stage.addChild(objects[obj_name]);"],["sprite","star2","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=170;objects[obj_name].sy=objects[obj_name].y=280;","app.stage.addChild(objects[obj_name]);"],["sprite","star3","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=290;objects[obj_name].sy=objects[obj_name].y=280;","app.stage.addChild(objects[obj_name]);"],["sprite","game_over","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","pause_block","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","retry_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=125;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){lose.button_down()};","app.stage.addChild(objects[obj_name]);"],["sprite","next_level_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=330;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){win.next_button_down(1)};","app.stage.addChild(objects[obj_name]);"],["sprite","resume_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_7.button_down();","app.stage.addChild(objects[obj_name]);"],["sprite","replay_level_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=130;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){win.next_button_down(0)};","app.stage.addChild(objects[obj_name]);"],["sprite","bonus","objects[obj_name]=new PIXI.Sprite();objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=225;objects[obj_name].sy=objects[obj_name].y=450;objects[obj_name].anchor.set(0.5,0.5);","app.stage.addChild(objects[obj_name]);"],["sprite","ad_for_arrows_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=325;objects[obj_name].sy=objects[obj_name].y=590;objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=()=>process_6.ad_for_arrows();","app.stage.addChild(objects[obj_name]);"],["cont","message_box_cont","objects[obj_name]=new PIXI.Container();objects[obj_name].ready=true;objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=-10;","objects[obj_name].addChild(objects.message_box);objects[obj_name].addChild(objects.message_text);app.stage.addChild(objects[obj_name]);"],["sprite","message_box","objects[obj_name].sx=objects[obj_name].x=10;objects[obj_name].sy=objects[obj_name].y=10;",""],["block","message_text","objects[obj_name]=new PIXI.BitmapText('Привет', {font: '10px Century Gothic',align: 'center'});objects[obj_name].anchor.set(0.5,0.5);objects[obj_name].x=220;objects[obj_name].y=45;",""],["image","button_1_loading",""],["sprite","ups_block","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=-10;objects[obj_name].sy=objects[obj_name].y=190;objects[obj_name].interactive=true;","app.stage.addChild(objects[obj_name]);"],["sprite","ups_ok_button","objects[obj_name].visible=false;objects[obj_name].sx=objects[obj_name].x=100;objects[obj_name].sy=objects[obj_name].y=570;objects[obj_name].ready=true;objects[obj_name].interactive=true;objects[obj_name].buttonMode=true;objects[obj_name].pointerdown=function(){ups.close()};","app.stage.addChild(objects[obj_name]);"]];var last_baloon_send_time = 0;
 var baloons_sent = 0;
 var baloons_cnt = 10;
 var arrows_cnt = 20;
@@ -1083,17 +1079,16 @@ function process_3() {
 		//if (bursted_baloons>0 && game_ended==false)
 		if (life == 0 && game_ended == false) {
 			game_ended = true;
-			g_process = process_6;
-			on_start = true;
+			g_process = function(){lose.process(1)};
 			return;
 		}
 
 		//
-		//if (bursted_baloons>0 && game_ended==false)
-		if ((bursted_baloons + baloons_finished) == baloons_cnt && game_ended == false) {
+		if (bursted_baloons>0 && game_ended==false)
+		//if ((bursted_baloons + baloons_finished) == baloons_cnt && game_ended == false)
+		{
 			game_ended = true;
-			g_process = process_5;
-			on_start = true;
+			g_process = function(){win.process(1)};
 			return;
 		}
 
@@ -1161,15 +1156,13 @@ function process_4() {
 	//обрабатываем событие выигрыша или проигрыша
 	if (life == 0 && game_ended == false) {
 		game_ended = true;
-		g_process = process_6;
-		on_start = true;
+		g_process = function(){lose.process(1)};
 		return;
 	}
 
 	if ((bursted_baloons + baloons_finished) == baloons_cnt && game_ended == false) {
 		game_ended = true;
-		g_process = process_5;
-		on_start = true;
+		g_process = function(){win.process(1)};
 		return;
 	}
 
@@ -1181,153 +1174,171 @@ function process_4() {
 }
 
 //это эпизод выигрыша
-var process_5 = function() {
+var win = {
+	
+	//это процессинговая функция
+	process: function(init) {
+		
 
-	//если это последний уровень то переходим к заключитьельному эпизоду
-	if (level === 26) {
-		g_process = process_8;
-		on_start = true;
-		return;
-	}
+		//если это последний уровень то переходим к заключитьельному эпизоду
+		if (level === 26) {
+			g_process = process_8;
+			on_start = true;
+			return;
+		}
 
-	//событие которое вызывается один раз для инициализации
-	if (on_start === true) {
-		//играем звуки
-		game_res.resources.win_level.sound.play();
+		//событие которое вызывается один раз для инициализации
+		if (init === 1) {
+			
+			//В послеждующем не выполняем этот блок
+			g_process = function(){win.process(0)};
+			
+			//играем звуки
+			game_res.resources.win_level.sound.play();
 
-		//убираем ненужные объекты
-		anim.add_pos({
-			obj: objects.arrow,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sx', 450],
-			speed: 0.02
-		});
-		anim.add_pos({
-			obj: objects.bow,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sx', 450],
-			speed: 0.02
-		});
+			//убираем ненужные объекты
+			anim.add_pos({
+				obj: objects.arrow,
+				param: 'x',
+				vis_on_end: false,
+				func: 'linear',
+				val: ['sx', 450],
+				speed: 0.02
+			});
+			anim.add_pos({
+				obj: objects.bow,
+				param: 'x',
+				vis_on_end: false,
+				func: 'linear',
+				val: ['sx', 450],
+				speed: 0.02
+			});
 
-		//добавляем основное окно
-		anim.add_pos({
-			obj: objects.win,
-			param: 'x',
-			vis_on_end: true,
-			func: 'easeOutElastic',
-			val: [-500, 'sx'],
-			speed: 0.01
-		});
+			//добавляем основное окно
+			anim.add_pos({
+				obj: objects.win,
+				param: 'x',
+				vis_on_end: true,
+				func: 'easeOutElastic',
+				val: [-500, 'sx'],
+				speed: 0.01
+			});
 
-		//обновляем рейтинг
-		if (my_data.uid !== "")
-			firebase.database().ref("players/" + my_data.uid + "/level").set(level + 1);
+			//обновляем рейтинг
+			if (my_data.uid !== "")
+				firebase.database().ref("players/" + my_data.uid + "/level").set(level + 1);
 
-		if (window.ysdk !== undefined) {
-			window.ysdk.getLeaderboards()
-				.then(lb => {
-					lb.setLeaderboardScore('myLeaderboard', level + 1);
+			if (window.ysdk !== undefined) {
+				window.ysdk.getLeaderboards()
+					.then(lb => {
+						lb.setLeaderboardScore('myLeaderboard', level + 1);
+					});
+			}
+
+			//отключаем паузу и убираем ее
+			anim.add_pos({
+				obj: objects.pause_button,
+				param: 'y',
+				vis_on_end: false,
+				func: 'linear',
+				val: ['sy', 800],
+				speed: 0.02
+			});
+
+			//другие инициализации
+			on_start = false;
+			game_tick = 0;
+		}
+
+		//показываем звезды
+		if (game_tick === 30) {
+			//добавляем количество звезд в зависимости от результата
+			if (life > 0)
+				anim.add_pos({
+					obj: objects.star1,
+					param: 'y',
+					vis_on_end: true,
+					func: 'easeOutBounce',
+					val: [-100, 'sy'],
+					speed: 0.01
+				});
+			if (life > 3)
+				anim.add_pos({
+					obj: objects.star2,
+					param: 'y',
+					vis_on_end: true,
+					func: 'easeOutBounce',
+					val: [-100, 'sy'],
+					speed: 0.015
+				});
+			if (life > 6)
+				anim.add_pos({
+					obj: objects.star3,
+					param: 'y',
+					vis_on_end: true,
+					func: 'easeOutBounce',
+					val: [-100, 'sy'],
+					speed: 0.02
 				});
 		}
 
-		//отключаем паузу и убираем ее
-		anim.add_pos({
-			obj: objects.pause_button,
-			param: 'y',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sy', 800],
-			speed: 0.02
-		});
+		//показываем бонусы
+		if (game_tick === 90) {
 
-		//другие инициализации
-		on_start = false;
-		game_tick = 0;
-	}
+			//добавляем количество звезд в зависимости от результата
+			if (life > 0 && life < 4)
+				arrows_bonus = 1;
 
-	//показываем звезды
-	if (game_tick === 30) {
-		//добавляем количество звезд в зависимости от результата
-		if (life > 0)
+			if (life > 3 && life < 7)
+				arrows_bonus = 5;
+
+			if (life > 6)
+				arrows_bonus = 10;
+
+			objects.bonus.texture = game_res.resources["bonus_" + arrows_bonus].texture;
 			anim.add_pos({
-				obj: objects.star1,
+				obj: objects.bonus,
 				param: 'y',
 				vis_on_end: true,
-				func: 'easeOutBounce',
-				val: [-100, 'sy'],
-				speed: 0.01
-			});
-		if (life > 3)
-			anim.add_pos({
-				obj: objects.star2,
-				param: 'y',
-				vis_on_end: true,
-				func: 'easeOutBounce',
-				val: [-100, 'sy'],
+				func: 'easeOutElastic',
+				val: [-50, 'sy'],
 				speed: 0.015
 			});
-		if (life > 6)
-			anim.add_pos({
-				obj: objects.star3,
+
+		}
+
+		//показываем кнопки
+		if (game_tick === 100) {
+			anim.add_scl({
+				obj: objects.next_level_button,
 				param: 'y',
 				vis_on_end: true,
-				func: 'easeOutBounce',
-				val: [-100, 'sy'],
-				speed: 0.02
+				func: 'linear',
+				val: [0, 1],
+				speed: 0.025
 			});
-	}
+			anim.add_scl({
+				obj: objects.replay_level_button,
+				param: 'y',
+				vis_on_end: true,
+				func: 'linear',
+				val: [0, 1],
+				speed: 0.025
+			});
+		}
 
-	//показываем бонусы
-	if (game_tick === 90) {
+		//обрабатываем стрелки
+		objects.arrows.forEach(e => e.process());
+	
+		//тик
+		game_tick++;
 
-		//добавляем количество звезд в зависимости от результата
-		if (life > 0 && life < 4)
-			arrows_bonus = 1;
-
-		if (life > 3 && life < 7)
-			arrows_bonus = 5;
-
-		if (life > 6)
-			arrows_bonus = 10;
-
-		objects.bonus.texture = game_res.resources["bonus_" + arrows_bonus].texture;
-		anim.add_pos({
-			obj: objects.bonus,
-			param: 'y',
-			vis_on_end: true,
-			func: 'easeOutElastic',
-			val: [-50, 'sy'],
-			speed: 0.015
-		});
-
-	}
-
-	//показываем кнопки
-	if (game_tick === 100) {
-		anim.add_scl({
-			obj: objects.next_level_button,
-			param: 'y',
-			vis_on_end: true,
-			func: 'linear',
-			val: [0, 1],
-			speed: 0.025
-		});
-		anim.add_scl({
-			obj: objects.replay_level_button,
-			param: 'y',
-			vis_on_end: true,
-			func: 'linear',
-			val: [0, 1],
-			speed: 0.025
-		});
-	}
+		//анимация
+		anim.process();
+	},
 
 	//это нажатие кнопки следующего уровня
-	function next_button_down(lev_inc) {
+	next_button_down: function(lev_inc) {
 					
 		if (game_platform==="YANDEX") {			
 			//показываем рекламу
@@ -1370,11 +1381,12 @@ var process_5 = function() {
 		}
 
 		if (game_platform==="LOCAL")
-			go_next_lev(lev_inc)
+			this.go_next_lev(lev_inc)
 	
-	}
+	},
 
-	function go_next_lev(lev_inc) {
+	//функция перехода на следующий уровень
+	go_next_lev: function(lev_inc) {
 
 		if (objects.next_level_button.ready === false)
 			return;
@@ -1389,283 +1401,194 @@ var process_5 = function() {
 		on_start = true;
 
 		//убираем кнопку с анимацией,звезды и другие объекты
-		anim.add_scl({
-			obj: objects.next_level_button,
-			param: 'y',
-			vis_on_end: false,
-			func: 'linear',
-			val: [1, 0],
-			speed: 0.02
-		});
-		anim.add_scl({
-			obj: objects.replay_level_button,
-			param: 'y',
-			vis_on_end: false,
-			func: 'linear',
-			val: [1, 0],
-			speed: 0.02
-		});
-		anim.add_pos({
-			obj: objects.win,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sx', -510],
-			speed: 0.02
-		});
+		anim.add_scl({obj: objects.next_level_button,	param: 'y',	vis_on_end: false,	func: 'linear',	val: [1, 0],	speed: 0.02	});
+		anim.add_scl({obj: objects.replay_level_button,	param: 'y',	vis_on_end: false,	func: 'linear',	val: [1, 0],	speed: 0.02	});
+		anim.add_pos({obj: objects.win,					param: 'x',	vis_on_end: false,	func: 'linear',	val: ['sx', -510],	speed: 0.02	});
 
 		//убираем звезды если они есть
 		if (objects.star1.visible === true)
-			anim.add_pos({
-				obj: objects.star1,
-				param: 'y',
-				vis_on_end: false,
-				func: 'easeInBack',
-				val: ['sy', 900],
-				speed: 0.01
-			});
+			anim.add_pos({	obj: objects.star1,	param: 'y',	vis_on_end: false,	func: 'easeInBack',	val: ['sy', 900],	speed: 0.01	});
 
 		if (objects.star2.visible === true)
-			anim.add_pos({
-				obj: objects.star2,
-				param: 'y',
-				vis_on_end: false,
-				func: 'easeInBack',
-				val: ['sy', 900],
-				speed: 0.015
-			});
+			anim.add_pos({	obj: objects.star2,	param: 'y',	vis_on_end: false,	func: 'easeInBack',	val: ['sy', 900],	speed: 0.015});
 
 		if (objects.star3.visible === true)
-			anim.add_pos({
-				obj: objects.star3,
-				param: 'y',
-				vis_on_end: false,
-				func: 'easeInBack',
-				val: ['sy', 900],
-				speed: 0.02
-			});
+			anim.add_pos({	obj: objects.star3,	param: 'y',	vis_on_end: false,	func: 'easeInBack',	val: ['sy', 900],	speed: 0.02	});
 
 		if (objects.bonus.visible === true)
-			anim.add_pos({
-				obj: objects.bonus,
-				param: 'alpha',
-				vis_on_end: false,
-				func: 'linear',
-				val: [1, 0],
-				speed: 0.02
-			});
+			anim.add_pos({	obj: objects.bonus,	param: 'alpha',	vis_on_end: false,	func: 'linear',	val: [1, 0],speed: 0.02	});
 
 		g_process = process_2;
 		on_start = true;
-
 	}
-
-	process_6.button_down = next_button_down;
-
-	//обрабатываем стрелки
-	objects.arrows.forEach(e => e.process());
-
-	//тик
-	game_tick++;
-
-	//анимация
-	anim.process();
 
 }
 
 //это эпизод проигрыша
-function process_6() {
-	//событие которое вызывается один раз для инициализации
-	if (on_start === true) {
-		//проигрываем звук
-		game_res.resources.lose.sound.play();
+var lose = {
+	
+	
+	process: function(init) {
+		
+		if (init===1) {
+			
+			//В послеждующем не выполняем этот блок
+			g_process = function(){lose.process(0)};
+				
+			//проигрываем звук
+			game_res.resources.lose.sound.play();
 
-		//убираем ненужные объекты
-		anim.add_pos({
-			obj: objects.arrow,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sx', 450],
-			speed: 0.02
-		});
-		anim.add_pos({
-			obj: objects.bow,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sx', 450],
-			speed: 0.02
-		});
+			//убираем ненужные объекты
+			anim.add_pos({	obj: objects.arrow,	param: 'x',	vis_on_end: false,	func: 'linear',	val: ['sx', 450],	speed: 0.02});
+			anim.add_pos({	obj: objects.bow,	param: 'x',	vis_on_end: false,	func: 'linear',	val: ['sx', 450],	speed: 0.02	});
 
-		//добавляем новые объекты
-		anim.add_pos({
-			obj: objects.game_over,
-			param: 'y',
-			vis_on_end: true,
-			func: 'linear',
-			val: [-500, 'sy'],
-			speed: 0.02
-		});
+			//добавляем новые объекты
+			anim.add_pos({	obj: objects.game_over,	param: 'y',	vis_on_end: true,	func: 'linear',val: [-500, 'sy'],speed: 0.02});
 
-		//убираем паузу
-		anim.add_pos({
-			obj: objects.pause_button,
-			param: 'y',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sy', 800],
-			speed: 0.02
-		});
+			//убираем паузу
+			anim.add_pos({	obj: objects.pause_button,	param: 'y',	vis_on_end: false,	func: 'linear',	val: ['sy', 800],speed: 0.02});
 
-		//другие инициализации
-		on_start = false;
+			//нет бонуса стрел
+			arrows_bonus = 0;
 
-		//нет бонуса стрел
-		arrows_bonus = 0;
+			//сбрасываем счетчик
+			game_tick = 0;			
+			
+		}
 
-		//сбрасываем счетчик
-		game_tick = 0;
-	}
+		
+		//показываем кнопки
+		if (game_tick === 70) {
+			anim.add_scl({	obj: objects.retry_button,	param: 'x',	vis_on_end: true,	func: 'linear',	val: [0, 1],	speed: 0.02	});
+			anim.add_scl({	obj: objects.ad_for_arrows_button,	param: 'x',	vis_on_end: true,	func: 'linear',	val: [0, 1],speed: 0.02	});
+		}
 
-	//показываем кнопки
-	if (game_tick === 70) {
-		anim.add_scl({
-			obj: objects.retry_button,
-			param: 'x',
-			vis_on_end: true,
-			func: 'linear',
-			val: [0, 1],
-			speed: 0.02
-		});
-		anim.add_scl({
-			obj: objects.ad_for_arrows_button,
-			param: 'x',
-			vis_on_end: true,
-			func: 'linear',
-			val: [0, 1],
-			speed: 0.02
-		});
-	}
+		//обрабатываем стрелки
+		objects.arrows.forEach(e => e.process());
 
-	//обрабатываем стрелки
-	objects.arrows.forEach(e => e.process());
+		//обрабатываем шары
+		objects.baloons.forEach(e => e.process());	
 
-	//обрабатываем шары
-	objects.baloons.forEach(e => e.process());
+		//тик
+		game_tick++;
+
+		//анимация
+		anim.process();
+	},
 
 	//это нажатие кнопки
-	function button_down() {
+	button_down: function() {
 
-		if (window.ysdk === undefined) {
-			restart();
-		} else {
+		if (game_platform==="YANDEX") {			
 			//показываем рекламу
 			window.ysdk.adv.showFullscreenAdv({
-				callbacks: {
-					onClose: (function(wasShown) {
-						restart()
-					}).bind(process_6),
-					onError: (function(error) {
-						restart()
-					}).bind(process_6)
-				}
+			  callbacks: {
+				onClose: function() {lose.restart()}, 
+				onError: function() {lose.restart()}
+						}
 			})
 		}
+		
+		if (game_platform==="VK_WEB") {
+					 
+			admanInit(
+			
+				{
+				  user_id: my_data.uid.substring(2),
+				  app_id: 7885384,
+				  type: 'preloader'   
+				},
+			
+			
+				function onAdsReady(adman) {
+				  adman.onStarted(function () {});
+				  adman.onCompleted(function() {lose.restart()});          
+				  adman.onSkipped(function() {lose.restart()});          
+				  adman.onClicked(function() {});
+				  adman.start('preroll');
+				},							
+				
+				function onNoAds() {lose.restart()}
+			);		
+		}		
+				
+		if (game_platform==="VK_MINIAPP") {
+					 
+			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"preloader"})
+			.then(data => function() {lose.restart()})
+			.catch(error => function() {lose.restart()});
+		}
 
-	}
+		if (game_platform==="LOCAL")
+			lose.restart();
 
-	function ad_for_arrows() {
-
-		if (objects.ad_for_arrows_button.ready === false)
-			return;
-
-		if (sn === "yandex") {
+	},
+	
+	
+	ad_for_arrows: function() {
+		
+		
+		if (game_platform==="YANDEX") {			
+			//показываем рекламу
 			window.ysdk.adv.showRewardedVideo({
 				callbacks: {
-					onRewarded: (function(wasShown) {
-						arrows_bonus = 5
-					}).bind(process_6),
-					onClose: (function(wasShown) {
-						ad_finish()
-					}).bind(process_6),
-					onError: (function(wasShown) {
-						ad_finish()
-					}).bind(process_6)
+					onOpen: () => {},
+					onRewarded: () => {function(){arrows_bonus=5; lose.ad_finish()}},
+					onClose: () => {function(){arrows_bonus=0; lose.ad_finish()}}, 
+					onError: (e) => {function(){arrows_bonus=0; lose.ad_finish()}}
 				}
 			})
 		}
-
-		if (sn === "vk") {
+		
+		if (game_platform==="VK_WEB") {
+					 
 			admanInit(
-
+			
 				{
-					user_id: my_data.uid.substring(2),
-					app_id: 7851674,
-					mobile: true,
-					type: 'rewarded' // 'preloader' or 'rewarded' (default - 'preloader')
+				  user_id: my_data.uid.substring(2),
+				  app_id: 7885384,
+				  type: 'rewarded'   
 				},
-
+			
+			
 				function onAdsReady(adman) {
-					adman.onStarted(function() {});
-					adman.onCompleted(function() {
-							arrows_bonus = 5;
-							ad_finish()
-						}
-						.bind(process_6));
-					adman.onSkipped(function() {
-							ad_finish()
-						}
-						.bind(process_6));
-					adman.onClicked(function() {
-							ad_finish()
-						}
-						.bind(process_6));
-					adman.start('preroll');
-				},
-
-				function() {
-					ad_finish()
-				}
-				.bind(process_6));
+				  adman.onStarted(function () {});
+				  adman.onCompleted(function(){arrows_bonus=5; lose.ad_finish()});          
+				  adman.onSkipped(function(){arrows_bonus=0; lose.ad_finish()});          
+				  adman.onClicked(function() {});
+				  adman.start('preroll');
+				},							
+				
+				function onNoAds() {lose.restart()}
+			);		
+		}		
+				
+		if (game_platform==="VK_MINIAPP") {
+					 
+			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"rewarded"})
+			.then(data => function(){arrows_bonus=5; lose.ad_finish()})
+			.catch(error => function(){arrows_bonus=0; lose.ad_finish()});
 		}
 
-	}
+		if (game_platform==="LOCAL")
+			lose.restart();
+		
+		
+		
+	},
 
-	function ad_finish() {
-		anim.add_scl({
-			obj: objects.ad_for_arrows_button,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: [1, 0],
-			speed: 0.02
-		});
+	ad_finish: function() {
+		anim.add_scl({	obj: objects.ad_for_arrows_button,	param: 'x',	vis_on_end: false,	func: 'linear',	val: [1, 0],	speed: 0.02	});
 
 		//показываем что получен бонус
 		if (arrows_bonus === 5) {
 			objects.bonus.texture = game_res.resources["bonus_5"].texture;
 			obj: objects.bonus.y = 700;
-			anim.add_pos({
-				obj: objects.bonus,
-				param: 'x',
-				vis_on_end: true,
-				func: 'easeOutElastic',
-				val: [-90, 90],
-				speed: 0.02
-			});
+			anim.add_pos({	obj: objects.bonus,	param: 'x',	vis_on_end: true,	func: 'easeOutElastic',	val: [-90, 90],	speed: 0.02	});
 
 			setTimeout(function() {
 
-				anim.add_pos({
-					obj: objects.bonus,
-					param: 'x',
-					vis_on_end: false,
-					func: 'easeInBack',
-					val: [90, -90],
-					speed: 0.02,
-					callback: function() {
-
+				anim.add_pos({	obj: objects.bonus,	param: 'x',	vis_on_end: false,	func: 'easeInBack',	val: [90, -90],	speed: 0.02,callback: function() {
 						//по завершении
 						objects.bonus.x = objects.bonus.sx;
 					}
@@ -1674,9 +1597,9 @@ function process_6() {
 			}, 3000);
 		}
 
-	}
-
-	function restart() {
+	},
+		
+	restart: function() {
 
 		if (objects.retry_button.ready === false)
 			return;
@@ -1684,51 +1607,21 @@ function process_6() {
 		//звук
 		game_res.resources.click.sound.play();
 
-		g_process = process_2;
-		on_start = true;
-
 		//убираем кнопки
-		anim.add_scl({
-			obj: objects.retry_button,
-			param: 'x',
-			vis_on_end: false,
-			func: 'linear',
-			val: [1, 0],
-			speed: 0.02
-		});
+		anim.add_scl({	obj: objects.retry_button,	param: 'x',	vis_on_end: false,	func: 'linear',	val: [1, 0],speed: 0.02	});
 
 		if (objects.ad_for_arrows_button.visible === true)
-			anim.add_scl({
-				obj: objects.ad_for_arrows_button,
-				param: 'x',
-				vis_on_end: false,
-				func: 'linear',
-				val: [1, 0],
-				speed: 0.02
-			});
+			anim.add_scl({	obj: objects.ad_for_arrows_button,	param: 'x',	vis_on_end: false,	func: 'linear',	val: [1, 0],	speed: 0.02	});
 
 		//убираем окно
-		anim.add_pos({
-			obj: objects.game_over,
-			param: 'y',
-			vis_on_end: false,
-			func: 'linear',
-			val: ['sy', 800],
-			speed: 0.02
-		});
+		anim.add_pos({	obj: objects.game_over,	param: 'y',	vis_on_end: false,	func: 'linear',	val: ['sy', 800],	speed: 0.02	});
 
 		g_process = process_2;
 		on_start = true;
 	}
 
-	process_6.button_down = button_down;
-	process_6.ad_for_arrows = ad_for_arrows;
 
-	//тик
-	game_tick++;
 
-	//анимация
-	anim.process();
 
 }
 
@@ -2233,8 +2126,8 @@ function load_resources() {
 	
 	
 	
-	let git_src="https://akukamil.github.io/crossfire/"
-	//let git_src=""
+	//let git_src="https://akukamil.github.io/crossfire/"
+	let git_src=""
 
 	//Инициируем файербейс
 	firebase.initializeApp({
