@@ -1840,7 +1840,6 @@ var user_data = {
 	// эта функция вызывается один раз в начале игры
 	req_result: "",
 	yndx_no_personal_data:0,
-	fb_error:0,
 	
 	read_cookie: function(name) {
 		var nameEQ = name + "=";
