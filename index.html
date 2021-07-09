@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <meta name="http-equiv" content="Content-type: text/html; charset=windows-1251">
 <style>
 		html,
 		body {
@@ -13,10 +13,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: black;
+		background-color: rgba(64,64,64,1);;
 		flex-direction: column
 	}
-    
+	
   
   #m_progress {
 	  background: rgba(11,255,255,0.1);
@@ -38,47 +38,19 @@
 	  width: 0%;
 	}
 	
-	
 </style>
 
-
-
-
+<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-database.js"></script>
 
 <div id="m_progress">
   <div id="m_bar"></div>
 </div>
 
-
-
-<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-analytics.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script>
-
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyCMjxckO8_ok87tF_fhOf9FfgOldBJVDZM",
-    authDomain: "m-crossfire.firebaseapp.com",
-    projectId: "m-crossfire",
-    storageBucket: "m-crossfire.appspot.com",
-    messagingSenderId: "486766708058",
-    appId: "1:486766708058:web:f66e76cd4ae595da811f63"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-</script>
-
-<script type="text/javascript" src="//vk.com/js/api/xd_connection.js?2" charset="utf-8"></script>
-<script type="text/javascript" src="//ad.mail.ru/static/admanhtml/rbadman-html5.min.js" charset="utf-8"></script>
-<script type="text/javascript" src="//vk.com/js/api/adman_init.js" charset="utf-8"></script>
-
-<script src="load_list.txt"> </script>	
-<script src="pixi-legacy.min.js"></script>	
-<script src="pixi-sound.js"></script>	
-<script type="text/javascript" src="index.js" charset="utf-8"></script>
-<script src="https://yandex.ru/games/sdk/v2"></script>
-
+<script src="pixi-legacy.min.js" ></script>
+<script src="pixi-sound.js"></script>
+<script src="index.js" charset="utf-8"></script>
+ 
 <body onload="load_resources()">
 
 </body>
