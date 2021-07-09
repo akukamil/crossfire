@@ -1358,7 +1358,7 @@ var process_5 = function() {
 				  adman.start('preroll');
 				},							
 				
-				function onNoAds() {process_5.go_next_lev(lev_inc)}
+				function onNoAds() {this.go_next_lev(lev_inc).bind(process_5)}
 			);		
 		}		
 				
