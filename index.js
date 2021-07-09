@@ -1866,6 +1866,7 @@ var user_data = {
 			
 	vkbridge_events: function(e) {
 
+		alert(e.detail.type);
 		if (e.detail.type === 'VKWebAppGetUserInfoResult') {
 			
 			my_data.first_name=e.detail.data.first_name;
@@ -2066,7 +2067,7 @@ var user_data = {
 	
 	process_results: function() {
 		
-					
+		alert("PROCESS_RESULTS");
 		if (user_data.req_result!=="ok") {		
 		
 			let c_player_uid=this.read_cookie("pic_url");
@@ -2091,6 +2092,7 @@ var user_data = {
 	
 	init_firebase: function() {
 
+		alert("init_firebase");
 		//запрашиваем мою информацию из бд или заносим в бд новые данные если игрока нет в бд
 		firebase.database().ref().child("players/"+my_data.uid).get().then((snapshot) => {			
 			var data=snapshot.val();
