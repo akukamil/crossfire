@@ -1514,8 +1514,8 @@ var lose = {
 		if (game_platform==="VK_MINIAPP") {
 					 
 			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"preloader"})
-			.then(data => function() {lose.restart()})
-			.catch(error => function() {lose.restart()});
+			.then(function() {lose.restart()})
+			.catch( function() {lose.restart()});
 		}
 
 		if (game_platform==="LOCAL")
