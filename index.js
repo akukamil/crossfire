@@ -2118,7 +2118,6 @@ var user_data = {
 
 	}	
 
-
 }
 
 var tab_change = function() {
@@ -2132,19 +2131,21 @@ function load_resources() {
 	
 	
 	
-	//let git_src="https://akukamil.github.io/crossfire/"
-	let git_src=""
+	let git_src="https://akukamil.github.io/crossfire/"
+	//let git_src=""
 
-	//Инициируем файербейс
-	firebase.initializeApp({
-		apiKey: "AIzaSyCMjxckO8_ok87tF_fhOf9FfgOldBJVDZM",
-		authDomain: "m-crossfire.firebaseapp.com",
-		projectId: "m-crossfire",
-		storageBucket: "m-crossfire.appspot.com",
-		messagingSenderId: "486766708058",
-		appId: "1:486766708058:web:f66e76cd4ae595da811f63"
-	});
-		
+	//инициируем файербейс
+	if (firebase.apps.length===0) {
+		firebase.initializeApp({
+			apiKey: "AIzaSyCMjxckO8_ok87tF_fhOf9FfgOldBJVDZM",
+			authDomain: "m-crossfire.firebaseapp.com",
+			databaseURL: "https://m-crossfire-default-rtdb.firebaseio.com",
+			projectId: "m-crossfire",
+			storageBucket: "m-crossfire.appspot.com",
+			messagingSenderId: "486766708058",
+			appId: "1:486766708058:web:f66e76cd4ae595da811f63"
+		});		
+	}
 	
 	
 	
@@ -2267,3 +2268,5 @@ function main_loop() {
 	app.render(app.stage);
 	requestAnimationFrame(main_loop);
 }
+
+
