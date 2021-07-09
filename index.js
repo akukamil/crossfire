@@ -1375,8 +1375,8 @@ var win = {
 		if (game_platform==="VK_MINIAPP") {
 					 
 			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"preloader"})
-			.then(data => win.go_next_lev(lev_inc))
-			.catch(error => win.go_next_lev(lev_inc));
+			.then(function(){ win.go_next_lev(lev_inc)})
+			.catch(function(){ win.go_next_lev(lev_inc)});
 		}
 
 		if (game_platform==="LOCAL")
@@ -1565,8 +1565,8 @@ var lose = {
 		if (game_platform==="VK_MINIAPP") {
 					 
 			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"rewarded"})
-			.then(data => function(){arrows_bonus=5; lose.ad_finish()})
-			.catch(error => function(){arrows_bonus=0; lose.ad_finish()});
+			.then(function(){arrows_bonus=5; lose.ad_finish()})
+			.catch(function(){arrows_bonus=0; lose.ad_finish()});
 		}
 
 		if (game_platform==="LOCAL")
