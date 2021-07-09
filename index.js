@@ -1942,6 +1942,7 @@ var user_data = {
 	yandex: function() {
 	
 		game_platform="YANDEX";
+		alert(game_platform);
 		if(typeof(YaGames)==='undefined')
 		{		
 			user_data.req_result='yndx_sdk_error';
@@ -1986,7 +1987,9 @@ var user_data = {
 			
 	vk_web: function() {
 		
+		
 		game_platform="VK_WEB";
+		alert(game_platform);
 		
 		if(typeof(VK)==='undefined')
 		{		
@@ -2041,8 +2044,9 @@ var user_data = {
 	},
 	
 	vk_miniapp: function() {
-		
+
 		game_platform="VK_MINIAPP";
+		alert(game_platform);
 		vkBridge.subscribe((e) => this.vkbridge_events(e)); 
 		vkBridge.send('VKWebAppInit');	
 		vkBridge.send('VKWebAppGetUserInfo');	
@@ -2052,6 +2056,7 @@ var user_data = {
 	local: function() {			
 
 		game_platform="LOCAL";
+		alert(game_platform);
 		this.req_result='ok'		
 		my_data.uid="unknown"+Math.floor(Math.random()*1000);
 		state="online";		
