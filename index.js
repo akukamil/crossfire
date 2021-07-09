@@ -1533,9 +1533,9 @@ var lose = {
 			window.ysdk.adv.showRewardedVideo({
 				callbacks: {
 					onOpen: () => {},
-					onRewarded: () => {function(){arrows_bonus=5; lose.ad_finish()}},
-					onClose: () => {function(){arrows_bonus=0; lose.ad_finish()}}, 
-					onError: (e) => {function(){arrows_bonus=0; lose.ad_finish()}}
+					onRewarded: function(){arrows_bonus=5; lose.ad_finish()},
+					onClose: function(){arrows_bonus=0; lose.ad_finish()}, 
+					onError: function(){arrows_bonus=0; lose.ad_finish()}
 				}
 			})
 		}
