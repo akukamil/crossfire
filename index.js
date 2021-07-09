@@ -1564,7 +1564,7 @@ var lose = {
 				
 		if (game_platform==="VK_MINIAPP") {
 					 
-			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"rewarded"})
+			vkBridge.send("VKWebAppShowNativeAds", {ad_format:"reward"})
 			.then(function(){arrows_bonus=5; lose.ad_finish()})
 			.catch(function(){arrows_bonus=0; lose.ad_finish()});
 		}
