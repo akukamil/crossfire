@@ -1195,45 +1195,37 @@ var win = {
 			//играем звуки
 			game_res.resources.win_level.sound.play();
 
+
+
 			//убираем ненужные объекты
-			anim.add_pos({
-				obj: objects.arrow,
-				param: 'x',
-				vis_on_end: false,
-				func: 'linear',
-				val: ['sx', 450],
-				speed: 0.02
-			});
-			anim.add_pos({
-				obj: objects.bow,
-				param: 'x',
-				vis_on_end: false,
-				func: 'linear',
-				val: ['sx', 450],
-				speed: 0.02
-			});
+			anim.add_pos({	obj: objects.arrow,	param: 'x',	vis_on_end: false,	func: 'linear',	val: ['sx', 450],	speed: 0.02	});
+			anim.add_pos({	obj: objects.bow,	param: 'x',	vis_on_end: false,	func: 'linear',	val: ['sx', 450],	speed: 0.02	});
 
 			//добавляем основное окно
-			anim.add_pos({
-				obj: objects.win,
-				param: 'x',
-				vis_on_end: true,
-				func: 'easeOutElastic',
-				val: [-500, 'sx'],
-				speed: 0.01
-			});
+			anim.add_pos({	obj: objects.win,	param: 'x',	vis_on_end: true,	func: 'easeOutElastic',	val: [-500, 'sx'],	speed: 0.01	});
 
 			//обновляем рейтинг
 			if (my_data.uid !== "")
 				firebase.database().ref("players/" + my_data.uid + "/level").set(level + 1);
-
-			if (window.ysdk !== undefined) {
+			
+			//обновляем лидерборд в яндексе
+			if (game_platform === "YANDEX") {
 				window.ysdk.getLeaderboards()
 					.then(lb => {
 						lb.setLeaderboardScore('myLeaderboard', level + 1);
 					});
 			}
-
+			
+			
+			//отправляем достижение в ленту вконтакте
+			if (game_platform === "VK_WEB") {
+					VK.api(
+						"secure.addAppEvent",
+						{activity_id: 1, value: level + 1},
+						function (data) {console.log(data)}
+					)
+			}
+			
 			//отключаем паузу и убираем ее
 			anim.add_pos({
 				obj: objects.pause_button,
