@@ -1219,11 +1219,8 @@ var win = {
 			
 			//отправляем достижение в ленту вконтакте
 			if (game_platform === "VK_WEB") {
-					VK.api(
-						"secure.addAppEvent",
-						{access_token: '2c2dcb592c2dcb592c2dcb59a62c55991122c2d2c2dcb594cfd0c5d42f4b700d3e509a5', user_id:39099558, activity_id: 1, value: level + 1},
-						function (data) {console.log(data)}
-					)
+					VK.callMethod("showInviteBox");
+
 			}
 			
 			//отключаем паузу и убираем ее
