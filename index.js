@@ -2047,7 +2047,7 @@ var user_data = {
 			
 			
 			VK.api(
-				"secure.checkToken",
+				"utils.getServerTime",
 				{access_token: '6b5a3f956b5a3f956bea4746c56b2defd666b5a6b5a3f950bb7b5c0d25105f3d8234e7a',client_secret: 'Mu73ncrZNbICvWMIXZ4y'},
 				function (data) {
 					console.log(data)
