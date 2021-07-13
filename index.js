@@ -2039,6 +2039,24 @@ var user_data = {
 
 		}		
 		
+		
+		
+		//проверяем токены
+		if (game_platform === "VK_WEB") {
+			
+			
+			
+			VK.api(
+				"secure.checkToken",
+				{access_token: '6b5a3f956b5a3f956bea4746c56b2defd666b5a6b5a3f950bb7b5c0d25105f3d8234e7a',client_secret: 'Mu73ncrZNbICvWMIXZ4y'},
+				function (data) {
+					console.log(data)
+				}
+			)
+			
+
+		}
+		
 				
 		//загружаем файербейс
 		this.init_firebase();	
