@@ -2237,7 +2237,7 @@ function load_resources() {
 
 function main_loop() {
 	g_process();
-	app.render(app.stage);
+	//app.render(app.stage);
 	requestAnimationFrame(main_loop);
 }
 
